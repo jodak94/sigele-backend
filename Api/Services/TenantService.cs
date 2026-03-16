@@ -18,7 +18,7 @@ public class TenantService : ITenantService
             return _manualTenantId.Value;
         
         var claim = _httpContextAccessor.HttpContext?.User
-            .FindFirst("tenant_id");
+            .FindFirst("tenantId");
 
         if (claim is null || !int.TryParse(claim.Value, out var tenantId))
             throw new UnauthorizedAccessException("Tenant not found in token.");

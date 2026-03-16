@@ -1,12 +1,14 @@
 ﻿using Application.Users.DTOs;
 using Application.Users.UseCases;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize]
 public class UsersController : ControllerBase
 {
     private readonly RegisterUser _registerUser;
