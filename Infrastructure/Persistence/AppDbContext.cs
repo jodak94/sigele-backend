@@ -21,6 +21,7 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<Tenant> Tenants => Set<Tenant>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     
     private int CurrentTenantId {
         get {
@@ -31,6 +32,7 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder){
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.Entity<RefreshToken>().HasQueryFilter(r => r.User.IsActive && r.User.TenantId == CurrentTenantId);
         ApplyGlobalFilters(modelBuilder);
     }
 

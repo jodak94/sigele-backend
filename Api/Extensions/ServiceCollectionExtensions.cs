@@ -1,12 +1,18 @@
-﻿using Api.Services;
+﻿using System.Text;
+using Api.Services;
+using Application.Auth.Interfaces;
+using Application.Auth.UseCases;
 using Application.Common.Interfaces;
 using Application.Roles;
 using Application.Users.Interfaces;
 using Application.Users.UseCases;
+using Infrastructure.Auth;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Extensions;
 
@@ -24,6 +30,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
 
         return services;
     }
@@ -31,7 +39,32 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<RegisterUser>();
+        services.AddScoped<Login>();
+        services.AddScoped<RefreshTokenUseCase>();
 
+        return services;
+    }
+
+    public static IServiceCollection AddJwtAuthentication(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidAudience = configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]!)),
+                };
+            });
+        services.AddAuthorization();
         return services;
     }
 }
