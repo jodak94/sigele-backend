@@ -9,4 +9,5 @@ public abstract class AuditableEntity
     public DateTime? DeletedAt { get; set; }
     public int? DeletedBy { get; set; }
     public bool IsActive { get; set; } = true;
+    public int TenantId { get; set; }
 }

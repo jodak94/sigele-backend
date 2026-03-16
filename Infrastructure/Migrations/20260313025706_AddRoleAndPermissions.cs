@@ -31,7 +31,7 @@ namespace Infrastructure.Migrations
                 defaultValue: 0);
 
             migrationBuilder.CreateTable(
-                name: "permissions",
+                name: "Permissions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -41,7 +41,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_permissions", x => x.Id);
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,9 +74,9 @@ namespace Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PermissionRole_permissions_PermissionsId",
+                        name: "FK_PermissionRole_Permissions_PermissionsId",
                         column: x => x.PermissionsId,
-                        principalTable: "permissions",
+                        principalTable: "Permissions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -92,7 +92,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "permissions",
+                table: "Permissions",
                 columns: new[] { "Id", "Description", "Name" },
                 values: new object[,]
                 {
@@ -125,8 +125,8 @@ namespace Infrastructure.Migrations
                 column: "RolesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_permissions_Name",
-                table: "permissions",
+                name: "IX_Permissions_Name",
+                table: "Permissions",
                 column: "Name",
                 unique: true);
 
@@ -159,7 +159,7 @@ namespace Infrastructure.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "permissions");
+                name: "Permissions");
 
             migrationBuilder.DropIndex(
                 name: "IX_Users_RoleId",

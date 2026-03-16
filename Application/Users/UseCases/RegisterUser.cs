@@ -38,7 +38,7 @@ public class RegisterUser
             FullName = dto.FullName,
             Email = dto.Email,
             Phone = dto.Phone,
-            Password = _passwordHasher.Hash(dto.Password),
+            PasswordHash = _passwordHasher.Hash(dto.Password),
             RoleId = role.Id,
             CreatedBy = 0
         };

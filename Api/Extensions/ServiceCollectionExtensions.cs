@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Api.Services;
+using Application.Common.Interfaces;
 using Application.Roles;
 using Application.Users.Interfaces;
 using Application.Users.UseCases;
@@ -22,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<ITenantService, TenantService>();
 
         return services;
     }

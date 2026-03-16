@@ -13,11 +13,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Id).ValueGeneratedOnAdd();
         builder.Property(u => u.FullName).IsRequired().HasMaxLength(256);
         builder.Property(u => u.Email).IsRequired().HasMaxLength(256);
-        builder.HasIndex(u => u.Email).IsUnique();
-        builder.Property(u => u.Password).IsRequired().HasMaxLength(256);
+        builder.HasIndex(u => new { u.Email, u.TenantId}).IsUnique();
+        builder.Property(u => u.PasswordHash).IsRequired().HasMaxLength(256);
         builder.Property(u => u.Phone).IsRequired().HasMaxLength(50);
-        builder.Property(u => u.CreatetAt).HasDefaultValue(DateTime.UtcNow);
+        builder.Property(u => u.CreatetAt).HasDefaultValueSql("GETUTCDATE()");
         builder.Property(u => u.UpdatedAt).ValueGeneratedOnUpdate();
         builder.Property(u => u.IsActive).HasDefaultValue(true);
+        builder.HasOne<Tenant>()
+            .WithMany()
+            .HasForeignKey(u => u.TenantId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
