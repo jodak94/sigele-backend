@@ -36,7 +36,7 @@ public class UserRepository : IUserRepository
 
     public async Task<(IEnumerable<User> Items, int TotalCount)> GetOperatorsAsync(int? createdBy, int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        var query = _context.Users.Include(u => u.Role).Where(u => u.Role.Name == "Operator");
+        var query = _context.Users.Include(u => u.Role).Where(u => u.Role.Name == "Operador");
 
         if (createdBy.HasValue)
             query = query.Where(u => u.CreatedBy == createdBy.Value);

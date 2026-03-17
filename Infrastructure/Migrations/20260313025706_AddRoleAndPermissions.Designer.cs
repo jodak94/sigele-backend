@@ -100,12 +100,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "Coordinator"
+                            Name = "Coordinador"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Operator"
+                            Name = "Operador"
                         });
                 });
 

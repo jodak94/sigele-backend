@@ -87,8 +87,8 @@ namespace Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, "Admin" },
-                    { 2, "Coordinator" },
-                    { 3, "Operator" }
+                    { 2, "Coordinador" },
+                    { 3, "Operador" }
                 });
 
             migrationBuilder.InsertData(

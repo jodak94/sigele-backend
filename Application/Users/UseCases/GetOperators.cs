@@ -20,7 +20,7 @@ public class GetOperators
         CancellationToken cancellationToken = default)
     {
         // admin sees all operators, coordinator sees only the ones he created
-        var createdBy = _currentUserService.Role == "Coordinator" ? _currentUserService.UserId : (int?)null;
+        var createdBy = _currentUserService.Role == "Coordinador" ? _currentUserService.UserId : (int?)null;
 
         var (items, totalCount) =
             await _userRepository.GetOperatorsAsync(createdBy, query.Page, query.PageSize, cancellationToken);
