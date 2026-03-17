@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Api.Extensions;
 using Api.Filters;
+using Api.Middlewares;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,6 +76,7 @@ app.UseCors("FrontendPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.Run();
 
