@@ -33,4 +33,23 @@ public class UserRepository : IUserRepository
     {
         await _context.Users.AddAsync(user, cancellationToken);
     }
+
+    public async Task<(IEnumerable<User> Items, int TotalCount)> GetOperatorsAsync(int? createdBy, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Users.Include(u => u.Role).Where(u => u.Role.Name == "Operator");
+
+        if (createdBy.HasValue)
+            query = query.Where(u => u.CreatedBy == createdBy.Value);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        
+        var items = await query.
+            OrderBy(u => u.CreatedBy).
+            ThenBy(u => u.FullName).
+            Skip((page -1) * pageSize).
+            Take(pageSize).
+            ToListAsync(cancellationToken);
+        
+        return (items, totalCount);
+    }
 }

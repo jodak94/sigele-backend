@@ -11,6 +11,6 @@ public class User : AuditableEntity
     public string PasswordHash { get; set; } = string.Empty;
     public DateTime? LastLogin { get; set; }
     public int RoleId { get; set; }
-    public Role Role { get; set; } = new Role();
+    public Role Role { get; set; } = null!;
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

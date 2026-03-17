@@ -8,4 +8,5 @@ public interface IUserRepository
     Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
     Task<bool> ExistByEmailAsync(string email, CancellationToken cancellationToken = default);
     Task AddAsync(User user, CancellationToken cancellationToken = default);
+    Task<(IEnumerable<User> Items, int TotalCount)> GetOperatorsAsync(int? createdBy, int page, int pageSize, CancellationToken cancellationToken = default);
 }

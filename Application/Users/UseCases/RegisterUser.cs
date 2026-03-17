@@ -12,14 +12,16 @@ public class RegisterUser
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantService _tenantService;
+    private readonly ICurrentUserService _currentUserService;
 
-    public RegisterUser(IUserRepository userRepository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IRoleRepository roleRepository, ITenantService tenantService)
+    public RegisterUser(IUserRepository userRepository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IRoleRepository roleRepository, ITenantService tenantService, ICurrentUserService currentUserService)
     {
         _userRepository = userRepository;
         _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
         _tenantService = tenantService;
+        _currentUserService = currentUserService;
     }
 
     public async Task<UserResponseDto> ExecuteAsync(CreateUserDto dto,
@@ -43,7 +45,7 @@ public class RegisterUser
             PasswordHash = _passwordHasher.Hash(dto.Password),
             RoleId = role.Id,
             TenantId = _tenantService.GetCurrentTenantId(),
-            CreatedBy = 0
+            CreatedBy = _currentUserService.UserId
         };
 
         await _userRepository.AddAsync(user, cancellationToken);

@@ -18,6 +18,13 @@ namespace Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public static IServiceCollection AddApiServices(this IServiceCollection services)
+    {
+        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        
+        return services;
+    }
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -29,7 +36,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IAuthRepository, AuthRepository>();
 
@@ -38,9 +44,10 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<RegisterUser>();
         services.AddScoped<Login>();
         services.AddScoped<RefreshTokenUseCase>();
+        services.AddScoped<GetOperators>();
+        services.AddScoped<RegisterUser>();
 
         return services;
     }
