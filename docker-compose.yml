@@ -1,9 +1,44 @@
-﻿services:
-  sqlServer:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+services:
+  postgres:
+    image: postgres:16
     container_name: sigele_db
     environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Ch4r4ct3rs"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "1433:1433"
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sigele_api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Jwt__Secret: ${JWT_SECRET}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__ExpireHours: ${JWT_EXPIRE_HOURS}
+    ports:
+      - "5157:8080"
+    depends_on:
+      - postgres
+  frontend:
+    build:
+      context: ../sigele-frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080/api}
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+    depends_on:
+      - api
+  
+
+volumes:
+  postgres_data:

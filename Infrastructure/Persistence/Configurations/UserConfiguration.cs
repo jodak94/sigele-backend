@@ -16,7 +16,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => new { u.Email, u.TenantId}).IsUnique();
         builder.Property(u => u.PasswordHash).IsRequired().HasMaxLength(256);
         builder.Property(u => u.Phone).IsRequired().HasMaxLength(50);
-        builder.Property(u => u.CreatetAt).HasDefaultValueSql("GETUTCDATE()");
+        builder.Property(u => u.CreatetAt).HasDefaultValueSql("NOW()");
         builder.Property(u => u.UpdatedAt).ValueGeneratedOnUpdate();
         builder.Property(u => u.IsActive).HasDefaultValue(true);
         builder.HasOne<Tenant>()
