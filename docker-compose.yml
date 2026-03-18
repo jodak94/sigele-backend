@@ -10,6 +10,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
     build:
@@ -25,20 +31,22 @@ services:
       Jwt__ExpireHours: ${JWT_EXPIRE_HOURS}
     ports:
       - "5157:8080"
+    restart: unless-stopped
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+
   frontend:
     build:
       context: ../sigele-frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080/api}
+        VITE_API_URL: ${VITE_API_URL}
     ports:
       - "5173:80"
     restart: unless-stopped
     depends_on:
       - api
-  
 
 volumes:
   postgres_data:
