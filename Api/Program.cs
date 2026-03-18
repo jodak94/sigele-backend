@@ -77,8 +77,14 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+    optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+    
+    using var db = new AppDbContext(optionsBuilder.Options, new DesignTimeTenantService());
+    Console.WriteLine(">>> Running migrations...");
     db.Database.Migrate();
+    Console.WriteLine(">>> Migrations complete.");
 }
 
 app.UseCors("FrontendPolicy");
