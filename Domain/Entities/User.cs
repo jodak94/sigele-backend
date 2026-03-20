@@ -12,5 +12,8 @@ public class User : AuditableEntity
     public DateTime? LastLogin { get; set; }
     public int RoleId { get; set; }
     public Role Role { get; set; } = null!;
+    public int? CoordinatorId { get; set; }
+    public User? Coordinator { get; set; }
+    public ICollection<User> Operators { get; set; } = new List<User>();
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

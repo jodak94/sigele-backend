@@ -8,7 +8,6 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
 {
     public void Configure(EntityTypeBuilder<Role> builder)
     {
-        builder.ToTable("Roles");
         builder.HasKey(r => r.Id);
         builder.Property(r => r.Name).IsRequired().HasMaxLength(50);
         builder.HasIndex(r => r.Name).IsUnique();
@@ -17,7 +16,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
             .WithMany(p => p.Roles)
             .UsingEntity(j =>
             {
-                j.ToTable("PermissionRole");
+                j.ToTable("permission_role");
                 j.HasData(
                     // Admin gets all permissions
                     new { RolesId = 1, PermissionsId = 1 },

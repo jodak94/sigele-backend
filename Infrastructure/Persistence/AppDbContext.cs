@@ -22,6 +22,10 @@ public class AppDbContext : DbContext
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<Seccional> Seccionales => Set<Seccional>();
+    public DbSet<LocalVotacion> Locales => Set<LocalVotacion>();
+    public DbSet<SeccLocal> SeccLocales => Set<SeccLocal>();
+    public DbSet<Elector> Electores => Set<Elector>();
     
     private int CurrentTenantId {
         get {

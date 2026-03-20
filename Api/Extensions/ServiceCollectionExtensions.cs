@@ -3,6 +3,8 @@ using Api.Services;
 using Application.Auth.Interfaces;
 using Application.Auth.UseCases;
 using Application.Common.Interfaces;
+using Application.Electores.Interfaces;
+using Application.Electores.UseCases;
 using Application.Roles;
 using Application.Users.Interfaces;
 using Application.Users.UseCases;
@@ -30,9 +32,11 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                   .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IElectorRepository, ElectorRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();
@@ -47,7 +51,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Login>();
         services.AddScoped<RefreshTokenUseCase>();
         services.AddScoped<GetOperators>();
+        services.AddScoped<GetCoordinators>();
         services.AddScoped<RegisterUser>();
+        services.AddScoped<GetElectorByNumeroCed>();
 
         return services;
     }

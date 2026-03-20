@@ -59,6 +59,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:80",
+                "http://localhost:5173",
                 "https://naomyferrer.sigele.com.py"
             )
             .AllowAnyHeader()
@@ -79,7 +80,8 @@ using (var scope = app.Services.CreateScope())
 {
     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
     var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-    optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+    optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                  .UseSnakeCaseNamingConvention();
     
     using var db = new AppDbContext(optionsBuilder.Options, new DesignTimeTenantService());
     Console.WriteLine(">>> Running migrations...");

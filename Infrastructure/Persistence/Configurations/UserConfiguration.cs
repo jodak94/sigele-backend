@@ -8,7 +8,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("Users");
         builder.HasKey(x => x.Id);
         builder.Property(u => u.Id).ValueGeneratedOnAdd();
         builder.Property(u => u.FullName).IsRequired().HasMaxLength(256);
@@ -19,6 +18,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatetAt).HasDefaultValueSql("NOW()");
         builder.Property(u => u.UpdatedAt).ValueGeneratedOnUpdate();
         builder.Property(u => u.IsActive).HasDefaultValue(true);
+        builder.HasOne(u => u.Coordinator)
+            .WithMany(u => u.Operators)
+            .HasForeignKey(u => u.CoordinatorId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired(false);
         builder.HasOne<Tenant>()
             .WithMany()
             .HasForeignKey(u => u.TenantId)

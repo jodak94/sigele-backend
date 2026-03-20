@@ -1,4 +1,5 @@
-﻿using Application.Users.Interfaces;
+using static Application.Common.Constants.Roles;
+using Application.Users.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ namespace Infrastructure.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly AppDbContext _context;
-    
+
     public UserRepository(AppDbContext context)
     {
         _context = context;
@@ -21,7 +22,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await _context.Users.FirstOrDefaultAsync(u =>  u.Email == email, cancellationToken);
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
     public async Task<bool> ExistByEmailAsync(string email, CancellationToken cancellationToken = default)
@@ -34,22 +35,31 @@ public class UserRepository : IUserRepository
         await _context.Users.AddAsync(user, cancellationToken);
     }
 
-    public async Task<(IEnumerable<User> Items, int TotalCount)> GetOperatorsAsync(int? createdBy, int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<(IEnumerable<User> Items, int TotalCount)> GetOperatorsAsync(int? coordinatorId, int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        var query = _context.Users.Include(u => u.Role).Where(u => u.Role.Name == "Operador");
+        var query = _context.Users.Include(u => u.Role).Where(u => u.Role.Name == Operator);
 
-        if (createdBy.HasValue)
-            query = query.Where(u => u.CreatedBy == createdBy.Value);
+        if (coordinatorId.HasValue)
+            query = query.Where(u => u.CoordinatorId == coordinatorId.Value);
 
         var totalCount = await query.CountAsync(cancellationToken);
-        
-        var items = await query.
-            OrderBy(u => u.CreatedBy).
-            ThenBy(u => u.FullName).
-            Skip((page -1) * pageSize).
-            Take(pageSize).
-            ToListAsync(cancellationToken);
-        
+
+        var items = await query
+            .OrderBy(u => u.CoordinatorId)
+            .ThenBy(u => u.FullName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
         return (items, totalCount);
+    }
+
+    public async Task<IEnumerable<User>> GetCoordinatorsAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .Include(u => u.Role)
+            .Where(u => u.Role.Name == Coordinator)
+            .OrderBy(u => u.FullName)
+            .ToListAsync(cancellationToken);
     }
 }

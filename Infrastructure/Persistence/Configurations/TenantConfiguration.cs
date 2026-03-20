@@ -17,7 +17,6 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
      */
     public void Configure(EntityTypeBuilder<Tenant> builder)
     {
-        builder.ToTable("Tenants");
         builder.HasKey(t => t.Id);
         builder.Property(t => t.Name).IsRequired().HasMaxLength(100);
         builder.Property(t => t.Subdomain).IsRequired().HasMaxLength(100);

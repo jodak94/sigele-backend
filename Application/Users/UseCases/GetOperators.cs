@@ -1,4 +1,5 @@
-﻿using Application.Common.DTOs;
+using static Application.Common.Constants.Roles;
+using Application.Common.DTOs;
 using Application.Common.Interfaces;
 using Application.Users.DTOs;
 using Application.Users.Interfaces;
@@ -9,7 +10,7 @@ public class GetOperators
 {
     private readonly IUserRepository _userRepository;
     private readonly ICurrentUserService _currentUserService;
-    
+
     public GetOperators(IUserRepository userRepository, ICurrentUserService currentUserService)
     {
         _userRepository = userRepository;
@@ -19,11 +20,13 @@ public class GetOperators
     public async Task<PaginatedResultDto<UserListItemDto>> ExecuteAsync(PaginationQueryDto query,
         CancellationToken cancellationToken = default)
     {
-        // admin sees all operators, coordinator sees only the ones he created
-        var createdBy = _currentUserService.Role == "Coordinador" ? _currentUserService.UserId : (int?)null;
+        // coordinator sees only their operators, admin sees all
+        var coordinatorId = _currentUserService.Role == Coordinator
+            ? _currentUserService.UserId
+            : (int?)null;
 
         var (items, totalCount) =
-            await _userRepository.GetOperatorsAsync(createdBy, query.Page, query.PageSize, cancellationToken);
+            await _userRepository.GetOperatorsAsync(coordinatorId, query.Page, query.PageSize, cancellationToken);
 
         return new PaginatedResultDto<UserListItemDto>
         {
