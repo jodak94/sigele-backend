@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260320154956_AddElectorConsultaAndTenantDominioIndex")]
+    partial class AddElectorConsultaAndTenantDominioIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -470,10 +473,10 @@ namespace Infrastructure.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("NOW()");
 
-                    b.Property<string>("Domain")
+                    b.Property<string>("Dominio")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnName("domain");
+                        .HasColumnName("dominio");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -496,10 +499,10 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_tenant");
 
-                    b.HasIndex("Domain")
+                    b.HasIndex("Dominio")
                         .IsUnique()
-                        .HasDatabaseName("ix_tenant_domain")
-                        .HasFilter("domain IS NOT NULL");
+                        .HasDatabaseName("ix_tenant_dominio")
+                        .HasFilter("dominio IS NOT NULL");
 
                     b.HasIndex("Subdomain")
                         .IsUnique()

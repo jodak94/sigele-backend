@@ -26,6 +26,7 @@ public class AppDbContext : DbContext
     public DbSet<LocalVotacion> Locales => Set<LocalVotacion>();
     public DbSet<SeccLocal> SeccLocales => Set<SeccLocal>();
     public DbSet<Elector> Electores => Set<Elector>();
+    public DbSet<ElectorConsulta> ElectorConsultas => Set<ElectorConsulta>();
     
     private int CurrentTenantId {
         get {

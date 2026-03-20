@@ -5,6 +5,7 @@ using Application.Auth.UseCases;
 using Application.Common.Interfaces;
 using Application.Electores.Interfaces;
 using Application.Electores.UseCases;
+using Application.Tenants.Interfaces;
 using Application.Roles;
 using Application.Users.Interfaces;
 using Application.Users.UseCases;
@@ -37,6 +38,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IElectorRepository, ElectorRepository>();
+        services.AddScoped<IElectorConsultaRepository, ElectorConsultaRepository>();
+        services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();

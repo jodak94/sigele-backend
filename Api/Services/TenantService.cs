@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Domain.Entities;
 
 namespace Api.Services;
 
@@ -16,16 +17,14 @@ public class TenantService : ITenantService
     {
         if (_manualTenantId.HasValue)
             return _manualTenantId.Value;
-        
-        var claim = _httpContextAccessor.HttpContext?.User
-            .FindFirst("tenantId");
 
-        if (claim is null || !int.TryParse(claim.Value, out var tenantId))
-            throw new UnauthorizedAccessException("Tenant not found in token.");
+        var tenant = _httpContextAccessor.HttpContext?.Items["Tenant"] as Tenant;
+        if (tenant is null)
+            throw new UnauthorizedAccessException("Tenant not resolved.");
 
-        return tenantId;
+        return tenant.Id;
     }
-    
+
     public void SetTenantId(int tenantId) {
         _manualTenantId = tenantId;
     }

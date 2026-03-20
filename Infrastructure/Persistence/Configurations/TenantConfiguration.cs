@@ -21,6 +21,8 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         builder.Property(t => t.Name).IsRequired().HasMaxLength(100);
         builder.Property(t => t.Subdomain).IsRequired().HasMaxLength(100);
         builder.HasIndex(t => t.Subdomain).IsUnique();
+        builder.Property(t => t.Domain).HasMaxLength(255).IsRequired(false);
+        builder.HasIndex(t => t.Domain).IsUnique().HasFilter("domain IS NOT NULL");
         builder.Property(t => t.CreatedAt).HasDefaultValueSql("NOW()");
         builder.Property(t => t.IsActive).HasDefaultValue(true);
     }

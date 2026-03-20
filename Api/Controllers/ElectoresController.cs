@@ -1,4 +1,6 @@
+using Application.Electores.DTOs;
 using Application.Electores.UseCases;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +21,18 @@ public class ElectoresController : ControllerBase
     [HttpGet("{numeroCed:int}")]
     public async Task<IActionResult> GetByNumeroCed(int numeroCed, CancellationToken cancellationToken)
     {
-        var result = await _getElectorByNumeroCed.ExecuteAsync(numeroCed, cancellationToken);
+        var tenant = (Tenant)HttpContext.Items["Tenant"]!;
+
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+        var contexto = new ConsultaContextDto(
+            TenantId:   tenant.Id,
+            IpCliente:  ip,
+            UserAgent:  Request.Headers.UserAgent.ToString(),
+            Origin:     Request.Headers.Origin.ToString(),
+            Host:       Request.Host.Value,
+            MetodoHttp: Request.Method);
+
+        var result = await _getElectorByNumeroCed.ExecuteAsync(numeroCed, contexto, cancellationToken);
 
         if (!result.Any())
             return NotFound();

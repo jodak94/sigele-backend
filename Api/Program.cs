@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Api.Extensions;
 using Api.Filters;
+using Api.Middleware;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -60,6 +61,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "http://localhost:80",
                 "http://localhost:5173",
+                "http://naomyferrer.localhost:5173",
                 "https://naomyferrer.sigele.com.py"
             )
             .AllowAnyHeader()
@@ -90,8 +92,10 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("FrontendPolicy");
+app.UseMiddleware<TenantResolutionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TenantValidationMiddleware>();
 app.MapControllers();
 
 app.Run();

@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260320154552_AddDominioToTenant")]
+    partial class AddDominioToTenant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,80 +131,6 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("idx_electores_sec_mesa");
 
                     b.ToTable("elector", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.ElectorConsulta", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Cedula")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("cedula");
-
-                    b.Property<DateTimeOffset>("ConsultadoEn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("consultado_en")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<bool>("Encontrado")
-                        .HasColumnType("boolean")
-                        .HasColumnName("encontrado");
-
-                    b.Property<string>("Host")
-                        .IsRequired()
-                        .HasMaxLength(253)
-                        .HasColumnType("character varying(253)")
-                        .HasColumnName("host");
-
-                    b.Property<string>("IpCliente")
-                        .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
-                        .HasColumnName("ip_cliente");
-
-                    b.Property<string>("MetodoHttp")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasDefaultValue("GET")
-                        .HasColumnName("metodo_http");
-
-                    b.Property<string>("Origin")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("origin");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<string>("UserAgent")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("user_agent");
-
-                    b.HasKey("Id")
-                        .HasName("pk_elector_consulta");
-
-                    b.HasIndex("Cedula")
-                        .HasDatabaseName("ix_elector_consulta_cedula");
-
-                    b.HasIndex("IpCliente")
-                        .HasDatabaseName("ix_elector_consulta_ip_cliente");
-
-                    b.HasIndex("TenantId", "ConsultadoEn")
-                        .HasDatabaseName("ix_elector_consulta_tenant_id_consultado_en");
-
-                    b.ToTable("elector_consulta", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.LocalVotacion", b =>
@@ -470,10 +399,10 @@ namespace Infrastructure.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("NOW()");
 
-                    b.Property<string>("Domain")
+                    b.Property<string>("Dominio")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnName("domain");
+                        .HasColumnName("dominio");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -495,11 +424,6 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_tenant");
-
-                    b.HasIndex("Domain")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tenant_domain")
-                        .HasFilter("domain IS NOT NULL");
 
                     b.HasIndex("Subdomain")
                         .IsUnique()
@@ -669,18 +593,6 @@ namespace Infrastructure.Migrations
                         .HasConstraintName("fk_elector_local_votacion_sec_loc");
 
                     b.Navigation("Local");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ElectorConsulta", b =>
-                {
-                    b.HasOne("Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_elector_consulta_tenant_tenant_id");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
