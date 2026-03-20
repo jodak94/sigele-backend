@@ -14,8 +14,8 @@ public class TenantResolutionMiddleware
 
     public async Task InvokeAsync(HttpContext context, ITenantRepository tenantRepository)
     {
-        var origin = context.Request.Headers.Origin.ToString();
-
+        //var origin = context.Request.Headers.Origin.ToString();
+        var origin = "http://naomyferrer.localhost:5173";
         if (string.IsNullOrWhiteSpace(origin) || !Uri.TryCreate(origin, UriKind.Absolute, out var originUri))
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;

@@ -57,6 +57,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetCoordinators>();
         services.AddScoped<RegisterUser>();
         services.AddScoped<GetElectorByNumeroCed>();
+        services.AddScoped<GetEstadisticasConsulta>();
+        services.AddScoped<ResetPassword>();
 
         return services;
     }

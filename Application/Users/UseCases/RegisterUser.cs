@@ -33,7 +33,7 @@ public class RegisterUser
         if (await _userRepository.ExistByEmailAsync(dto.Email, cancellationToken))
             throw new InvalidOperationException("A user with this email already exists.");
 
-        var role = await _roleRepository.GetByNameAsync(dto.RoleName, cancellationToken);
+        var role = await _roleRepository.GetByIdAsync(dto.RoleId, cancellationToken);
         if (role is null)
             throw new InvalidOperationException("The role does not exist.");
 

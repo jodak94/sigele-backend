@@ -18,6 +18,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatetAt).HasDefaultValueSql("NOW()");
         builder.Property(u => u.UpdatedAt).ValueGeneratedOnUpdate();
         builder.Property(u => u.IsActive).HasDefaultValue(true);
+        builder.Property(u => u.MustChangePassword).HasDefaultValue(true);
         builder.HasOne(u => u.Coordinator)
             .WithMany(u => u.Operators)
             .HasForeignKey(u => u.CoordinatorId)

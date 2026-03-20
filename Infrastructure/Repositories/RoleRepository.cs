@@ -14,6 +14,11 @@ public class RoleRepository : IRoleRepository
         _context = context;
     }
 
+    public async Task<IEnumerable<Role>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Roles.OrderBy(r => r.Id).ToListAsync(cancellationToken);
+    }
+
     public async Task<Role?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _context.Roles

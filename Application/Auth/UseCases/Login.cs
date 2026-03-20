@@ -56,6 +56,7 @@ public class Login
                 FullName = user.FullName,
                 Email = user.Email,
                 Role = user.Role.Name,
+                MustChangePassword = user.MustChangePassword,
                 Permissions = permissions
             }
         };
