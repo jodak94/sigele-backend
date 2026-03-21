@@ -27,6 +27,7 @@ public class AppDbContext : DbContext
     public DbSet<SeccLocal> SeccLocales => Set<SeccLocal>();
     public DbSet<Elector> Electores => Set<Elector>();
     public DbSet<ElectorConsulta> ElectorConsultas => Set<ElectorConsulta>();
+    public DbSet<OperadorElector> OperadorElectores => Set<OperadorElector>();
     
     private int CurrentTenantId {
         get {

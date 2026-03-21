@@ -5,6 +5,8 @@ using Application.Auth.UseCases;
 using Application.Common.Interfaces;
 using Application.Electores.Interfaces;
 using Application.Electores.UseCases;
+using Application.Operadores.Interfaces;
+using Application.Operadores.UseCases;
 using Application.Tenants.Interfaces;
 using Application.Roles;
 using Application.Users.Interfaces;
@@ -40,6 +42,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IElectorRepository, ElectorRepository>();
         services.AddScoped<IElectorConsultaRepository, ElectorConsultaRepository>();
         services.AddScoped<ITenantRepository, TenantRepository>();
+        services.AddScoped<IOperadorElectorRepository, OperadorElectorRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();
@@ -59,6 +62,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetElectorByNumeroCed>();
         services.AddScoped<GetEstadisticasConsulta>();
         services.AddScoped<ResetPassword>();
+        services.AddScoped<AsignarElector>();
+        services.AddScoped<GetElectoresDeOperador>();
+        services.AddScoped<ActualizarElector>();
+        services.AddScoped<RemoverElector>();
 
         return services;
     }

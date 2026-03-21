@@ -1,7 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace Application.Electores.DTOs;
 
 public class ElectorDetailDto
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Id { get; set; }
     public int NumeroCed { get; set; }
     public string? Apellido { get; set; }
     public string? Nombre { get; set; }

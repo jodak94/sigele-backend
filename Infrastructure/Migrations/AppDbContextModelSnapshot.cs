@@ -204,6 +204,66 @@ namespace Infrastructure.Migrations
                     b.ToTable("elector_consulta", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.OperadorElector", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.Property<int>("ElectorId")
+                        .HasColumnType("integer")
+                        .HasColumnName("elector_id");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<bool>("DisponibleMiembroMesa")
+                        .HasColumnType("boolean")
+                        .HasColumnName("disponible_miembro_mesa");
+
+                    b.Property<bool>("RequiereTransporte")
+                        .HasColumnType("boolean")
+                        .HasColumnName("requiere_transporte");
+
+                    b.Property<string>("NroTelefono")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("nro_telefono");
+
+                    b.Property<string>("DireccionRecogida")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("direccion_recogida");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.HasKey("UserId", "ElectorId")
+                        .HasName("pk_operador_elector");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_operador_elector_user_id");
+
+                    b.HasIndex("ElectorId")
+                        .HasDatabaseName("ix_operador_elector_elector_id");
+
+                    b.HasIndex("ElectorId", "TenantId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_operador_elector_elector_tenant_active")
+                        .HasFilter("is_active = true");
+
+                    b.ToTable("operador_elector", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.LocalVotacion", b =>
                 {
                     b.Property<int>("SeccLoc")
@@ -707,6 +767,34 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_elector_consulta_tenant_tenant_id");
 
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("Domain.Entities.OperadorElector", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_operador_elector_user_user_id");
+
+                    b.HasOne("Domain.Entities.Elector", "Elector")
+                        .WithMany()
+                        .HasForeignKey("ElectorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_operador_elector_elector_elector_id");
+
+                    b.HasOne("Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_operador_elector_tenant_tenant_id");
+
+                    b.Navigation("User");
+                    b.Navigation("Elector");
                     b.Navigation("Tenant");
                 });
 

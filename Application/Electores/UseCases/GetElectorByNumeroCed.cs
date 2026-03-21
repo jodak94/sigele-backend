@@ -15,24 +15,28 @@ public class GetElectorByNumeroCed
         _consultaRepository = consultaRepository;
     }
 
-    public async Task<IEnumerable<ElectorDetailDto>> ExecuteAsync(int numeroCed, ConsultaContextDto contexto, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ElectorDetailDto>> ExecuteAsync(int numeroCed, ConsultaContextDto? contexto, bool includeId = false, CancellationToken cancellationToken = default)
     {
         var results = (await _electorRepository.GetByNumeroCedAsync(numeroCed, cancellationToken)).ToList();
 
-        await _consultaRepository.RegistrarAsync(new ElectorConsulta
+        if (contexto is not null)
         {
-            TenantId  = contexto.TenantId,
-            Cedula    = numeroCed.ToString(),
-            IpCliente = contexto.IpCliente,
-            UserAgent = contexto.UserAgent,
-            Origin    = contexto.Origin,
-            Host      = contexto.Host,
-            MetodoHttp = contexto.MetodoHttp,
-            Encontrado = results.Count != 0
-        }, cancellationToken);
+            await _consultaRepository.RegistrarAsync(new ElectorConsulta
+            {
+                TenantId   = contexto.TenantId,
+                Cedula     = numeroCed.ToString(),
+                IpCliente  = contexto.IpCliente,
+                UserAgent  = contexto.UserAgent,
+                Origin     = contexto.Origin,
+                Host       = contexto.Host,
+                MetodoHttp = contexto.MetodoHttp,
+                Encontrado = results.Count != 0
+            }, cancellationToken);
+        }
 
         return results.Select(r => new ElectorDetailDto
         {
+            Id        = includeId ? r.Elector.Id : null,
             NumeroCed = r.Elector.NumeroCed,
             Apellido  = r.Elector.Apellido,
             Nombre    = r.Elector.Nombre,

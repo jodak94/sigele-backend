@@ -23,16 +23,22 @@ public class ElectoresController : ControllerBase
     {
         var tenant = (Tenant)HttpContext.Items["Tenant"]!;
 
-        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
-        var contexto = new ConsultaContextDto(
-            TenantId:   tenant.Id,
-            IpCliente:  ip,
-            UserAgent:  Request.Headers.UserAgent.ToString(),
-            Origin:     Request.Headers.Origin.ToString(),
-            Host:       Request.Host.Value,
-            MetodoHttp: Request.Method);
+        ConsultaContextDto? contexto = null;
 
-        var result = await _getElectorByNumeroCed.ExecuteAsync(numeroCed, contexto, cancellationToken);
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+            contexto = new ConsultaContextDto(
+                TenantId:   tenant.Id,
+                IpCliente:  ip,
+                UserAgent:  Request.Headers.UserAgent.ToString(),
+                Origin:     Request.Headers.Origin.ToString(),
+                Host:       Request.Host.Value,
+                MetodoHttp: Request.Method);
+        }
+
+        var isAuthenticated = User.Identity?.IsAuthenticated == true;
+        var result = await _getElectorByNumeroCed.ExecuteAsync(numeroCed, contexto, isAuthenticated, cancellationToken);
 
         if (!result.Any())
             return NotFound();
