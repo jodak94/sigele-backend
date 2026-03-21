@@ -11,9 +11,12 @@ using Application.Tenants.Interfaces;
 using Application.Roles;
 using Application.Users.Interfaces;
 using Application.Users.UseCases;
+using Application.Reportes.Interfaces;
+using Application.Reportes.UseCases;
 using Infrastructure.Auth;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Infrastructure.Reports;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -43,6 +46,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IElectorConsultaRepository, ElectorConsultaRepository>();
         services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<IOperadorElectorRepository, OperadorElectorRepository>();
+        services.AddScoped<ElectorXlsExporter>();
+        services.AddScoped<ElectorPdfExporter>();
+        services.AddScoped<IReportExporterFactory, ReportExporterFactory>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();
@@ -66,6 +72,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetElectoresDeOperador>();
         services.AddScoped<ActualizarElector>();
         services.AddScoped<RemoverElector>();
+        services.AddScoped<GetReporteElectoresPorOperador>();
 
         return services;
     }
