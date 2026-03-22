@@ -21,14 +21,14 @@ public class ElectorConsultaRepository : IElectorConsultaRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<EstadisticasConsultaDto> GetEstadisticasAsync(CancellationToken cancellationToken = default)
+    public async Task<EstadisticasConsultaDto> GetEstadisticasAsync(int tenantId, CancellationToken cancellationToken = default)
     {
         var ahora = DateTimeOffset.UtcNow;
         var inicioHoy  = new DateTimeOffset(ahora.UtcDateTime.Date, TimeSpan.Zero);
         var inicioAyer = inicioHoy.AddDays(-1);
         var inicio7D   = inicioHoy.AddDays(-7);
 
-        var base_ = _context.ElectorConsultas;
+        var base_ = _context.ElectorConsultas.Where(c => c.TenantId == tenantId);
 
         var hoy    = await base_.CountAsync(c => c.ConsultadoEn >= inicioHoy,  cancellationToken);
         var ayer   = await base_.CountAsync(c => c.ConsultadoEn >= inicioAyer && c.ConsultadoEn < inicioHoy, cancellationToken);
