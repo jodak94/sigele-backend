@@ -11,23 +11,23 @@ public class AsignarElector
     private readonly IOperadorElectorRepository _operadorElectorRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ITenantService _tenantService;
+    private readonly ICurrentUserService _currentUserService;
 
     public AsignarElector(
         IOperadorElectorRepository operadorElectorRepository,
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
-        ITenantService tenantService)
+        ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
-        _tenantService = tenantService;
+        _currentUserService = currentUserService;
     }
 
     public async Task ExecuteAsync(int operadorId, AsignarElectorDto dto, CancellationToken cancellationToken = default)
     {
-        var tenantId = _tenantService.GetCurrentTenantId();
+        var tenantId = _currentUserService.TenantId;
 
         var operador = await _userRepository.GetByIdAsync(operadorId, cancellationToken);
         if (operador is null || operador.TenantId != tenantId)

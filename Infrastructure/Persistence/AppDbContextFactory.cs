@@ -28,5 +28,4 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 public class DesignTimeTenantService : ITenantService
 {
     public int GetCurrentTenantId() => 0;
-    public void SetTenantId(int tenantId){ }
 }

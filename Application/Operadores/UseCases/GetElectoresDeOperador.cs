@@ -11,25 +11,22 @@ public class GetElectoresDeOperador
     private readonly IOperadorElectorRepository _operadorElectorRepository;
     private readonly IUserRepository _userRepository;
     private readonly ICurrentUserService _currentUserService;
-    private readonly ITenantService _tenantService;
 
     public GetElectoresDeOperador(
         IOperadorElectorRepository operadorElectorRepository,
         IUserRepository userRepository,
-        ICurrentUserService currentUserService,
-        ITenantService tenantService)
+        ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;
         _userRepository = userRepository;
         _currentUserService = currentUserService;
-        _tenantService = tenantService;
     }
 
     public async Task<IEnumerable<OperadorElectorDto>> ExecuteAsync(int operadorId, CancellationToken cancellationToken = default)
     {
         var requesterId = _currentUserService.UserId;
         var requesterRole = _currentUserService.Role;
-        var tenantId = _tenantService.GetCurrentTenantId();
+        var tenantId = _currentUserService.TenantId;
 
         var operador = await _userRepository.GetByIdAsync(operadorId, cancellationToken);
         if (operador is null || operador.TenantId != tenantId)

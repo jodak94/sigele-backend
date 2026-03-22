@@ -13,6 +13,8 @@ public class OperadoresController : ControllerBase
 {
     private readonly AsignarElector _asignarElector;
     private readonly GetElectoresDeOperador _getElectoresDeOperador;
+    private readonly GetInfoDeOperadores _getInfoDeOperadores;
+    private readonly BuscarElectorAsignado _buscarElectorAsignado;
     private readonly ActualizarElector _actualizarElector;
     private readonly RemoverElector _removerElector;
     private readonly ICurrentUserService _currentUserService;
@@ -20,12 +22,16 @@ public class OperadoresController : ControllerBase
     public OperadoresController(
         AsignarElector asignarElector,
         GetElectoresDeOperador getElectoresDeOperador,
+        GetInfoDeOperadores getInfoDeOperadores,
+        BuscarElectorAsignado buscarElectorAsignado,
         ActualizarElector actualizarElector,
         RemoverElector removerElector,
         ICurrentUserService currentUserService)
     {
         _asignarElector = asignarElector;
         _getElectoresDeOperador = getElectoresDeOperador;
+        _getInfoDeOperadores = getInfoDeOperadores;
+        _buscarElectorAsignado = buscarElectorAsignado;
         _actualizarElector = actualizarElector;
         _removerElector = removerElector;
         _currentUserService = currentUserService;
@@ -74,6 +80,34 @@ public class OperadoresController : ControllerBase
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("info")]
+    public async Task<IActionResult> GetInfoDeOperadores(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _getInfoDeOperadores.ExecuteAsync(cancellationToken);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
+    [HttpGet("electores/buscar")]
+    public async Task<IActionResult> BuscarElectorAsignado([FromQuery] int cedula, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _buscarElectorAsignado.ExecuteAsync(cedula, cancellationToken);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
     }
 

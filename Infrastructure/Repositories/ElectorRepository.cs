@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Application.Electores.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
@@ -20,9 +21,10 @@ public class ElectorRepository : IElectorRepository
             .Include(e => e.Local)
             .Where(e => e.NumeroCed == numeroCed)
             .ToListAsync(cancellationToken);
-
+        var sw = Stopwatch.StartNew();
         var results = new List<(Elector, Seccional?)>();
-
+        sw.Stop();
+        Console.WriteLine($"Query tardó: {sw.ElapsedMilliseconds}ms");
         foreach (var elector in electores)
         {
             Seccional? seccional = null;

@@ -61,7 +61,9 @@ builder.Services.AddCors(options =>
         policy.SetIsOriginAllowed(origin =>
             {
                 var host = new Uri(origin).Host;
-                return host == "localhost" || host.EndsWith(".sigele.com.py");
+                return host == "localhost" 
+                       || host.EndsWith(".localhost")  // covers *.localhost
+                       || host.EndsWith(".sigele.com.py");
             })
             .AllowAnyHeader()
             .AllowAnyMethod();

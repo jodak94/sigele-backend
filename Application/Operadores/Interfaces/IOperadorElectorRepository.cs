@@ -9,4 +9,6 @@ public interface IOperadorElectorRepository
     Task AddAsync(OperadorElector operadorElector, CancellationToken cancellationToken = default);
     Task<IEnumerable<OperadorElectorDto>> GetByOperadorAsync(int operadorId, CancellationToken cancellationToken = default);
     Task<OperadorElector?> GetAsync(int operadorId, int electorId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<OperadorInfoDto>> GetInfoDeOperadoresAsync(int? coordinatorId, int tenantId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<ElectorAsignadoDto>> BuscarPorNumeroCedAsync(int numeroCed, int? operatorId, int? coordinatorId, int tenantId, CancellationToken cancellationToken = default);
 }

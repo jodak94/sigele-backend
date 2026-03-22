@@ -13,12 +13,12 @@ public class AuthRepository : IAuthRepository
     {
         _context = context;
     }
-    public async Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
+    public async Task<User?> GetUserByEmailAndTenantAsync(string email, int tenantId, CancellationToken cancellationToken = default)
     {
         return await _context.Users
             .Include(u => u.Role)
             .ThenInclude(r => r.Permissions)
-            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Email == email && u.TenantId == tenantId, cancellationToken);
     }
 
     public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)

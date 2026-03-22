@@ -12,6 +12,6 @@ public class GetEstadisticasConsulta
         _consultaRepository = consultaRepository;
     }
 
-    public Task<EstadisticasConsultaDto> ExecuteAsync(int tenantId, CancellationToken cancellationToken = default)
-        => _consultaRepository.GetEstadisticasAsync(tenantId, cancellationToken);
+    public Task<EstadisticasConsultaDto> ExecuteAsync(CancellationToken cancellationToken = default)
+        => _consultaRepository.GetEstadisticasAsync(cancellationToken);
 }

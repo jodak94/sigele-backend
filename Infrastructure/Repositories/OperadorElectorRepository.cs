@@ -1,3 +1,4 @@
+using Application.Common.Constants;
 using Application.Operadores.DTOs;
 using Application.Operadores.Interfaces;
 using Domain.Entities;
@@ -45,6 +46,52 @@ public class OperadorElectorRepository : IOperadorElectorRepository
                 oe.RequiereTransporte,
                 oe.NroTelefono,
                 oe.DireccionRecogida
+            ))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<ElectorAsignadoDto>> BuscarPorNumeroCedAsync(int numeroCed, int? operatorId, int? coordinatorId, int tenantId, CancellationToken cancellationToken = default)
+    {
+        var query = _context.OperadorElectores
+            .Where(oe => oe.IsActive && oe.TenantId == tenantId && oe.Elector.NumeroCed == numeroCed);
+
+        if (operatorId.HasValue)
+            query = query.Where(oe => oe.UserId == operatorId.Value);
+        else if (coordinatorId.HasValue)
+            query = query.Where(oe => oe.User.CoordinatorId == coordinatorId.Value);
+
+        return await query
+            .Select(oe => new ElectorAsignadoDto(
+                oe.ElectorId,
+                oe.Elector.Nombre,
+                oe.Elector.Apellido,
+                oe.Elector.NumeroCed,
+                oe.DisponibleMiembroMesa,
+                oe.RequiereTransporte,
+                oe.NroTelefono,
+                oe.DireccionRecogida,
+                new OperadorBasicoDto(oe.UserId, oe.User.FullName, oe.User.Email, oe.User.Phone)
+            ))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<OperadorInfoDto>> GetInfoDeOperadoresAsync(int? coordinatorId, int tenantId, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Users
+            .Where(u => u.TenantId == tenantId && u.IsActive && u.Role.Name == Roles.Operator);
+
+        if (coordinatorId.HasValue)
+            query = query.Where(u => u.CoordinatorId == coordinatorId.Value);
+
+        return await query
+            .Select(u => new OperadorInfoDto(
+                u.Id,
+                u.FullName,
+                u.Email,
+                u.Phone,
+                _context.OperadorElectores.Count(oe => oe.UserId == u.Id && oe.IsActive),
+                _context.OperadorElectores.Count(oe => oe.UserId == u.Id && oe.IsActive && oe.DisponibleMiembroMesa),
+                _context.OperadorElectores.Count(oe => oe.UserId == u.Id && oe.IsActive && oe.RequiereTransporte)
             ))
             .ToListAsync(cancellationToken);
     }

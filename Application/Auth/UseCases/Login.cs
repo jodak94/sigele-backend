@@ -25,8 +25,8 @@ public class Login
 
     public async Task<AuthResponseDto> ExecuteAsync(LoginDto dto, CancellationToken cancellationToken = default)
     {
-        _tenantService.SetTenantId(dto.TenantId);
-        var user = await _authRepository.GetUserByEmailAsync(dto.Email, cancellationToken);
+        int tenantId = _tenantService.GetCurrentTenantId();
+        var user = await _authRepository.GetUserByEmailAndTenantAsync(dto.Email, tenantId, cancellationToken);
         if (user is null || !_passwordHasher.Verify(dto.Password, user.PasswordHash))
         {
             throw new UnauthorizedAccessException("Invalid email or password");

@@ -30,12 +30,15 @@ public class RegisterUser
 
     public async Task<UserResponseDto> ExecuteAsync(CreateUserDto dto, CancellationToken cancellationToken = default)
     {
+        var requesterRole = _currentUserService.Role;
+
+        if (requesterRole == Operator)
+            throw new UnauthorizedAccessException("Operators cannot create users.");
+
         if (await _userRepository.ExistByEmailAsync(dto.Email, cancellationToken))
             throw new InvalidOperationException("A user with this email already exists.");
 
-        var role = await _roleRepository.GetByIdAsync(dto.RoleId, cancellationToken);
-        if (role is null)
-            throw new InvalidOperationException("The role does not exist.");
+        var role = await ResolveRoleAsync(dto, cancellationToken);
 
         if (role.Name == Admin)
             throw new UnauthorizedAccessException("Admin users cannot be created through this endpoint.");
@@ -73,6 +76,22 @@ public class RegisterUser
                 Permissions = role.Permissions.Select(p => p.Name)
             }
         };
+    }
+
+    private async Task<Role> ResolveRoleAsync(CreateUserDto dto, CancellationToken cancellationToken)
+    {
+        if (_currentUserService.Role == Coordinator)
+        {
+            var operatorRole = await _roleRepository.GetByNameAsync(Operator, cancellationToken);
+            return operatorRole ?? throw new InvalidOperationException("Operator role not found.");
+        }
+
+        // Admin must explicitly provide RoleId
+        if (!dto.RoleId.HasValue)
+            throw new InvalidOperationException("A role must be specified.");
+
+        var role = await _roleRepository.GetByIdAsync(dto.RoleId.Value, cancellationToken);
+        return role ?? throw new InvalidOperationException("The role does not exist.");
     }
 
     private int? ResolveCoordinatorId(string roleName, CreateUserDto dto)
