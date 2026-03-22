@@ -58,12 +58,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:80",
-                "http://localhost:5173",
-                "http://naomyferrer.localhost:5173",
-                "https://naomyferrer.sigele.com.py"
-            )
+        policy.SetIsOriginAllowed(origin =>
+            {
+                var host = new Uri(origin).Host;
+                return host == "localhost" || host.EndsWith(".sigele.com.py");
+            })
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
