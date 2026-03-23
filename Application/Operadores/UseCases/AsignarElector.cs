@@ -37,6 +37,22 @@ public class AsignarElector
         if (yaAsignado)
             throw new InvalidOperationException("El elector ya está asignado a otro operador en este tenant.");
 
+        var existente = await _operadorElectorRepository
+            .GetByUserAndElectorAsync(operadorId, dto.ElectorId, includeInactive: true, cancellationToken);
+
+        if (existente != null)//Para el caso de soft delete y reactivacion
+        {
+            existente.IsActive = true;
+            existente.TenantId = tenantId;
+            existente.DisponibleMiembroMesa = dto.DisponibleMiembroMesa;
+            existente.RequiereTransporte = dto.RequiereTransporte;
+            existente.NroTelefono = dto.NroTelefono;
+            existente.DireccionRecogida = dto.DireccionRecogida;
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return;
+        }
+
         var operadorElector = new OperadorElector
         {
             UserId                = operadorId,

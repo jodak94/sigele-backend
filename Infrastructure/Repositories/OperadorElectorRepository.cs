@@ -169,4 +169,22 @@ public class OperadorElectorRepository : IOperadorElectorRepository
             ))
             .ToListAsync(cancellationToken);
     }
+    
+    public async Task<OperadorElector?> GetByUserAndElectorAsync(
+        int userId,
+        int electorId,
+        bool includeInactive,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<OperadorElector> query = _context.OperadorElectores;
+
+        if (includeInactive)
+            query = query.IgnoreQueryFilters();
+
+        return await query
+            .FirstOrDefaultAsync(
+                oe => oe.UserId == userId && oe.ElectorId == electorId,
+                cancellationToken
+            );
+    }
 }
