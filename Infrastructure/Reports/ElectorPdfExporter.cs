@@ -30,7 +30,7 @@ public class ElectorPdfExporter : IReportExporter
                         col.Item().Row(row =>
                         {
                             row.RelativeItem()
-                                .Text("Mi Lista de Electores")
+                                .Text("Lista de Electores")
                                 .Bold()
                                 .FontSize(18);
 

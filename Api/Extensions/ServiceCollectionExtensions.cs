@@ -47,9 +47,22 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<IOperadorElectorRepository, OperadorElectorRepository>();
         services.AddScoped<IEstadisticasOperadoresRepository, EstadisticasOperadoresRepository>();
+        services.AddScoped<IEstadisticasZonalesRepository, EstadisticasZonalesRepository>();
         services.AddScoped<ElectorXlsExporter>();
         services.AddScoped<ElectorPdfExporter>();
         services.AddScoped<IReportExporterFactory, ReportExporterFactory>();
+        services.AddScoped<ListaAsistenciaPdfExporter>();
+        services.AddScoped<ListaAsistenciaXlsExporter>();
+        services.AddScoped<IListaAsistenciaExporterFactory, ListaAsistenciaExporterFactory>();
+        services.AddScoped<ResumenOperadoresPdfExporter>();
+        services.AddScoped<ResumenOperadoresXlsExporter>();
+        services.AddScoped<IResumenOperadoresExporterFactory, ResumenOperadoresExporterFactory>();
+        services.AddScoped<DiaDPdfExporter>();
+        services.AddScoped<DiaDXlsExporter>();
+        services.AddScoped<IDiaDExporterFactory, DiaDExporterFactory>();
+        services.AddScoped<CandidatosMesaPdfExporter>();
+        services.AddScoped<CandidatosMesaXlsExporter>();
+        services.AddScoped<ICandidatosMesaExporterFactory, CandidatosMesaExporterFactory>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();
@@ -68,6 +81,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<RegisterUser>();
         services.AddScoped<GetElectorByNumeroCed>();
         services.AddScoped<GetEstadisticasConsulta>();
+        services.AddScoped<GetEstadisticasPadronPublico>();
         services.AddScoped<ResetPassword>();
         services.AddScoped<AsignarElector>();
         services.AddScoped<GetElectoresDeOperador>();
@@ -77,6 +91,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ActualizarElector>();
         services.AddScoped<RemoverElector>();
         services.AddScoped<GetReporteElectoresPorOperador>();
+        services.AddScoped<GetListaAsistencia>();
+        services.AddScoped<GetResumenOperadores>();
+        services.AddScoped<GetReporteDiaD>();
+        services.AddScoped<GetReporteCandidatosMesa>();
+        services.AddScoped<GetTopLocalesConsultados>();
+        services.AddScoped<GetUltimasConsultas>();
+        services.AddScoped<GetEstadisticasZonales>();
+        services.AddScoped<GetRankingOperadores>();
 
         return services;
     }

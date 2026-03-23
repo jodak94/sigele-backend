@@ -1,5 +1,6 @@
 using Application.Electores.DTOs;
 using Application.Electores.Interfaces;
+using Dapper;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -36,5 +37,55 @@ public class ElectorConsultaRepository : IElectorConsultaRepository
         var total  = await base_.CountAsync(cancellationToken);
 
         return new EstadisticasConsultaDto(hoy, ayer, siete, total);
+    }
+
+    public async Task<EstadisticasPadronPublicoDto> GetEstadisticasPadronPublicoAsync(int tenantId, CancellationToken cancellationToken = default)
+    {
+        var base_ = _context.ElectorConsultas.Where(c => c.TenantId == tenantId);
+
+        var inicio7D = new DateTimeOffset(DateTimeOffset.UtcNow.UtcDateTime.Date, TimeSpan.Zero).AddDays(-7);
+
+        var total         = await base_.LongCountAsync(cancellationToken);
+        var ultimosSiete  = await base_.LongCountAsync(c => c.ConsultadoEn >= inicio7D, cancellationToken);
+        var cedulasUnicas = await base_.Select(c => c.Cedula).Distinct().LongCountAsync(cancellationToken);
+
+        var horarioPico = await base_
+            .GroupBy(c => c.ConsultadoEn.Hour)
+            .Select(g => new { Hora = g.Key, Total = g.LongCount() })
+            .OrderByDescending(x => x.Total)
+            .Select(x => (int?)x.Hora)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return new EstadisticasPadronPublicoDto(total, ultimosSiete, cedulasUnicas, horarioPico);
+    }
+
+    public async Task<IEnumerable<TopLocalConsultadoDto>> GetTopLocalesConsultadosAsync(int tenantId, int top, CancellationToken cancellationToken = default)
+    {
+        const string sql = """
+            SELECT lv.nombre_loc AS LocalVotacion,
+                   COUNT(*)::bigint AS TotalBusquedas
+            FROM elector_consulta ec
+            JOIN elector          e  ON e.numero_ced::text = ec.cedula
+            JOIN local_votacion   lv ON lv.secc_loc = e.sec_loc
+            WHERE ec.tenant_id   = @TenantId
+              AND ec.encontrado  = true
+              AND lv.nombre_loc IS NOT NULL
+            GROUP BY lv.nombre_loc
+            ORDER BY TotalBusquedas DESC
+            LIMIT @Top
+            """;
+
+        var connection = _context.Database.GetDbConnection();
+        return await connection.QueryAsync<TopLocalConsultadoDto>(sql, new { TenantId = tenantId, Top = top });
+    }
+
+    public async Task<IEnumerable<UltimaConsultaDto>> GetUltimasConsultasAsync(int tenantId, int top, CancellationToken cancellationToken = default)
+    {
+        return await _context.ElectorConsultas
+            .Where(c => c.TenantId == tenantId)
+            .OrderByDescending(c => c.ConsultadoEn)
+            .Take(top)
+            .Select(c => new UltimaConsultaDto(c.ConsultadoEn, c.Cedula, c.Encontrado))
+            .ToListAsync(cancellationToken);
     }
 }

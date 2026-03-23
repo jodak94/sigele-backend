@@ -11,15 +11,32 @@ namespace Api.Controllers;
 [Route("api/estadisticas")]
 public class EstadisticasController : ControllerBase
 {
-    private readonly GetEstadisticasConsulta _getEstadisticas;
-    private readonly GetEstadisticasOperadores _getEstadisticasOperadores;
+    private static readonly HashSet<int> TopValidos = [5, 10, 25, 50];
+
+    private readonly GetEstadisticasConsulta      _getEstadisticas;
+    private readonly GetEstadisticasOperadores    _getEstadisticasOperadores;
+    private readonly GetEstadisticasPadronPublico _getEstadisticasPadronPublico;
+    private readonly GetTopLocalesConsultados     _getTopLocales;
+    private readonly GetUltimasConsultas          _getUltimasConsultas;
+    private readonly GetEstadisticasZonales       _getEstadisticasZonales;
+    private readonly GetRankingOperadores         _getRankingOperadores;
 
     public EstadisticasController(
         GetEstadisticasConsulta getEstadisticas,
-        GetEstadisticasOperadores getEstadisticasOperadores)
+        GetEstadisticasOperadores getEstadisticasOperadores,
+        GetEstadisticasPadronPublico getEstadisticasPadronPublico,
+        GetTopLocalesConsultados getTopLocales,
+        GetUltimasConsultas getUltimasConsultas,
+        GetEstadisticasZonales getEstadisticasZonales,
+        GetRankingOperadores getRankingOperadores)
     {
-        _getEstadisticas = getEstadisticas;
-        _getEstadisticasOperadores = getEstadisticasOperadores;
+        _getEstadisticas              = getEstadisticas;
+        _getEstadisticasOperadores    = getEstadisticasOperadores;
+        _getEstadisticasPadronPublico = getEstadisticasPadronPublico;
+        _getTopLocales                = getTopLocales;
+        _getUltimasConsultas          = getUltimasConsultas;
+        _getEstadisticasZonales       = getEstadisticasZonales;
+        _getRankingOperadores         = getRankingOperadores;
     }
 
     [HttpGet("consultas")]
@@ -30,6 +47,14 @@ public class EstadisticasController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("padron-publico")]
+    [RequiresPermission(Permissions.Consultas.Read)]
+    public async Task<IActionResult> GetPadronPublico(CancellationToken cancellationToken)
+    {
+        var result = await _getEstadisticasPadronPublico.ExecuteAsync(cancellationToken);
+        return Ok(result);
+    }
+
     [HttpGet("operadores")]
     [Authorize]
     public async Task<IActionResult> GetOperadores(CancellationToken cancellationToken)
@@ -37,6 +62,73 @@ public class EstadisticasController : ControllerBase
         try
         {
             var result = await _getEstadisticasOperadores.ExecuteAsync(cancellationToken);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
+    [HttpGet("top-locales")]
+    [RequiresPermission(Permissions.Consultas.Read)]
+    public async Task<IActionResult> GetTopLocales([FromQuery] int top, CancellationToken cancellationToken)
+    {
+        if (!TopValidos.Contains(top))
+            return BadRequest($"El parámetro 'top' debe ser uno de: {string.Join(", ", TopValidos)}.");
+
+        var result = await _getTopLocales.ExecuteAsync(top, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("ultimas-consultas")]
+    [RequiresPermission(Permissions.Consultas.Read)]
+    public async Task<IActionResult> GetUltimasConsultas([FromQuery] int top, CancellationToken cancellationToken)
+    {
+        if (!TopValidos.Contains(top))
+            return BadRequest($"El parámetro 'top' debe ser uno de: {string.Join(", ", TopValidos)}.");
+
+        var result = await _getUltimasConsultas.ExecuteAsync(top, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("ranking-operadores")]
+    [Authorize]
+    public async Task<IActionResult> GetRankingOperadores(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _getRankingOperadores.ExecuteAsync(cancellationToken);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
+    [HttpGet("zonales/resumen")]
+    [Authorize]
+    public async Task<IActionResult> GetResumenZonal(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _getEstadisticasZonales.GetResumenAsync(cancellationToken);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
+    [HttpGet("zonales/seccionales")]
+    [Authorize]
+    public async Task<IActionResult> GetSecccionalesCaptacion(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _getEstadisticasZonales.GetListaAsync(cancellationToken);
             return Ok(result);
         }
         catch (UnauthorizedAccessException)

@@ -1,6 +1,7 @@
 using Application.Common.Constants;
 using Application.Operadores.DTOs;
 using Application.Operadores.Interfaces;
+using Application.Reportes.DTOs;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -71,6 +72,79 @@ public class OperadorElectorRepository : IOperadorElectorRepository
                 oe.NroTelefono,
                 oe.DireccionRecogida,
                 new OperadorBasicoDto(oe.UserId, oe.User.FullName, oe.User.Email, oe.User.Phone)
+            ))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<ListaAsistenciaItemDto>> GetListaAsistenciaAsync(int operadorId, CancellationToken cancellationToken = default)
+    {
+        return await _context.OperadorElectores
+            .Where(oe => oe.UserId == operadorId && oe.IsActive)
+            .OrderBy(oe => oe.Elector.Apellido)
+            .ThenBy(oe => oe.Elector.Nombre)
+            .Select(oe => new ListaAsistenciaItemDto(
+                oe.Elector.NumeroCed,
+                (oe.Elector.Apellido + " " + oe.Elector.Nombre).Trim(),
+                oe.NroTelefono,
+                oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
+                oe.Elector.Mesa,
+                oe.Elector.Orden
+            ))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<ResumenOperadorItemDto>> GetResumenOperadoresAsync(int? coordinatorId, int tenantId, short? codigoSeccional, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Users
+            .Where(u => u.TenantId == tenantId && u.IsActive && u.Role.Name == Roles.Operator);
+
+        if (coordinatorId.HasValue)
+            query = query.Where(u => u.CoordinatorId == coordinatorId.Value);
+
+        return await query
+            .Select(u => new ResumenOperadorItemDto(
+                u.FullName,
+                u.Phone,
+                _context.OperadorElectores.Count(oe => oe.UserId == u.Id && oe.IsActive &&
+                    (!codigoSeccional.HasValue || oe.Elector.CodigoSec == codigoSeccional.Value)),
+                _context.OperadorElectores.Count(oe => oe.UserId == u.Id && oe.IsActive && oe.DisponibleMiembroMesa &&
+                    (!codigoSeccional.HasValue || oe.Elector.CodigoSec == codigoSeccional.Value)),
+                _context.OperadorElectores.Count(oe => oe.UserId == u.Id && oe.IsActive && oe.RequiereTransporte &&
+                    (!codigoSeccional.HasValue || oe.Elector.CodigoSec == codigoSeccional.Value))
+            ))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<CandidatoMesaFlatItemDto>> GetCandidatosMesaFlatAsync(int? coordinatorId, CancellationToken cancellationToken = default)
+    {
+        return await _context.OperadorElectores
+            .Where(oe => oe.DisponibleMiembroMesa &&
+                         (!coordinatorId.HasValue || oe.User.CoordinatorId == coordinatorId.Value))
+            .Select(oe => new CandidatoMesaFlatItemDto(
+                oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
+                (oe.Elector.Apellido + " " + oe.Elector.Nombre).Trim(),
+                oe.Elector.NumeroCed,
+                oe.NroTelefono,
+                oe.Elector.Mesa,
+                oe.User.FullName
+            ))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<DiaDFlatItemDto>> GetDiaDFlatAsync(int? coordinatorId, CancellationToken cancellationToken = default)
+    {
+        return await _context.OperadorElectores
+            .Where(oe => !coordinatorId.HasValue || oe.User.CoordinatorId == coordinatorId.Value)
+            .Select(oe => new DiaDFlatItemDto(
+                oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
+                oe.Elector.Mesa,
+                oe.Elector.Orden,
+                oe.Elector.NumeroCed,
+                (oe.Elector.Apellido + " " + oe.Elector.Nombre).Trim(),
+                oe.NroTelefono,
+                oe.DireccionRecogida,
+                oe.RequiereTransporte,
+                oe.User.FullName
             ))
             .ToListAsync(cancellationToken);
     }
