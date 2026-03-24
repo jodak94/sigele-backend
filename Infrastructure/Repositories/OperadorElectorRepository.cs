@@ -170,6 +170,22 @@ public class OperadorElectorRepository : IOperadorElectorRepository
             .ToListAsync(cancellationToken);
     }
     
+    public async Task<IEnumerable<ResumenCoordinadorDto>> GetResumenCoordinadoresAsync(int tenantId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .Where(u => u.TenantId == tenantId && u.IsActive && u.Role.Name == Roles.Coordinator)
+            .Select(u => new ResumenCoordinadorDto(
+                u.Id,
+                u.FullName,
+                u.Email,
+                u.Phone,
+                _context.Users.Count(op => op.CoordinatorId == u.Id && op.Role.Name == Roles.Operator),
+                _context.OperadorElectores.Count(oe => oe.User.CoordinatorId == u.Id && oe.IsActive),
+                _context.OperadorElectores.Count(oe => oe.User.CoordinatorId == u.Id && oe.IsActive && oe.DisponibleMiembroMesa)
+            ))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<OperadorElector?> GetByUserAndElectorAsync(
         int userId,
         int electorId,

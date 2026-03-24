@@ -101,6 +101,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetUltimasConsultas>();
         services.AddScoped<GetEstadisticasZonales>();
         services.AddScoped<GetRankingOperadores>();
+        services.AddScoped<GetResumenCoordinadores>();
         services.AddScoped<GetTenantBranding>();
 
         return services;

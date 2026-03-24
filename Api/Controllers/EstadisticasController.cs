@@ -20,6 +20,7 @@ public class EstadisticasController : ControllerBase
     private readonly GetUltimasConsultas          _getUltimasConsultas;
     private readonly GetEstadisticasZonales       _getEstadisticasZonales;
     private readonly GetRankingOperadores         _getRankingOperadores;
+    private readonly GetResumenCoordinadores      _getResumenCoordinadores;
 
     public EstadisticasController(
         GetEstadisticasConsulta getEstadisticas,
@@ -28,7 +29,8 @@ public class EstadisticasController : ControllerBase
         GetTopLocalesConsultados getTopLocales,
         GetUltimasConsultas getUltimasConsultas,
         GetEstadisticasZonales getEstadisticasZonales,
-        GetRankingOperadores getRankingOperadores)
+        GetRankingOperadores getRankingOperadores,
+        GetResumenCoordinadores getResumenCoordinadores)
     {
         _getEstadisticas              = getEstadisticas;
         _getEstadisticasOperadores    = getEstadisticasOperadores;
@@ -37,6 +39,7 @@ public class EstadisticasController : ControllerBase
         _getUltimasConsultas          = getUltimasConsultas;
         _getEstadisticasZonales       = getEstadisticasZonales;
         _getRankingOperadores         = getRankingOperadores;
+        _getResumenCoordinadores      = getResumenCoordinadores;
     }
 
     [HttpGet("consultas")]
@@ -90,6 +93,21 @@ public class EstadisticasController : ControllerBase
 
         var result = await _getUltimasConsultas.ExecuteAsync(top, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpGet("resumen-coordinadores")]
+    [Authorize]
+    public async Task<IActionResult> GetResumenCoordinadores(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _getResumenCoordinadores.ExecuteAsync(cancellationToken);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
     }
 
     [HttpGet("ranking-operadores")]
