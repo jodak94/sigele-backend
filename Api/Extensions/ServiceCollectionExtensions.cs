@@ -8,6 +8,7 @@ using Application.Electores.UseCases;
 using Application.Operadores.Interfaces;
 using Application.Operadores.UseCases;
 using Application.Tenants.Interfaces;
+using Application.Tenants.UseCases;
 using Application.Roles;
 using Application.Users.Interfaces;
 using Application.Users.UseCases;
@@ -45,6 +46,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IElectorRepository, ElectorRepository>();
         services.AddScoped<IElectorConsultaRepository, ElectorConsultaRepository>();
         services.AddScoped<ITenantRepository, TenantRepository>();
+        services.AddScoped<ITenantBrandingRepository, TenantBrandingRepository>();
         services.AddScoped<IOperadorElectorRepository, OperadorElectorRepository>();
         services.AddScoped<IEstadisticasOperadoresRepository, EstadisticasOperadoresRepository>();
         services.AddScoped<IEstadisticasZonalesRepository, EstadisticasZonalesRepository>();
@@ -99,6 +101,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetUltimasConsultas>();
         services.AddScoped<GetEstadisticasZonales>();
         services.AddScoped<GetRankingOperadores>();
+        services.AddScoped<GetTenantBranding>();
 
         return services;
     }

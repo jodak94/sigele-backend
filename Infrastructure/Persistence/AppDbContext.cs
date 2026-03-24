@@ -28,6 +28,7 @@ public class AppDbContext : DbContext
     public DbSet<Elector> Electores => Set<Elector>();
     public DbSet<ElectorConsulta> ElectorConsultas => Set<ElectorConsulta>();
     public DbSet<OperadorElector> OperadorElectores => Set<OperadorElector>();
+    public DbSet<TenantBranding> TenantBrandings => Set<TenantBranding>();
     
     private int CurrentTenantId {
         get {
