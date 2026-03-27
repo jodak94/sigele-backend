@@ -1,13 +1,12 @@
 namespace Application.Reportes.DTOs;
 
 public record ElectorReporteDto(
-    string Nombre,
-    string Apellido,
-    int NroDocumento,
-    string NroTelefono,
-    bool MiembroMesa,
-    bool RequiereTransporte,
-    string? Direccion
+    int     NroDocumento,
+    string  Nombre,
+    string  Apellido,
+    string? LocalVotacion,
+    short?  Mesa,
+    short?  Orden
 );
 
 public record ReporteElectoresResult(

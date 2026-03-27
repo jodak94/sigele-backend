@@ -22,7 +22,7 @@ public class GetResumenOperadores
         _currentUserService        = currentUserService;
     }
 
-    public async Task<ResumenOperadoresData> ExecuteAsync(short? codigoSeccional, CancellationToken cancellationToken = default)
+    public async Task<ResumenOperadoresData> ExecuteAsync(short? codigoSeccional, int? coordinadorIdFiltro, CancellationToken cancellationToken = default)
     {
         var requesterId   = _currentUserService.UserId;
         var requesterRole = _currentUserService.Role;
@@ -31,7 +31,12 @@ public class GetResumenOperadores
         if (requesterRole == Operator)
             throw new UnauthorizedAccessException("No tiene permiso para generar este reporte.");
 
-        int? coordinatorId = requesterRole == Coordinator ? requesterId : null;
+        int? coordinatorId = requesterRole switch
+        {
+            Coordinator => requesterId,
+            Admin       => coordinadorIdFiltro,
+            _           => null
+        };
 
         var operadores = await _operadorElectorRepository.GetResumenOperadoresAsync(
             coordinatorId, tenantId, codigoSeccional, cancellationToken);
@@ -45,9 +50,10 @@ public class GetResumenOperadores
         );
 
         CoordinadorInfoDto? coordinador = null;
-        if (requesterRole == Coordinator)
+        int? resolvedCoordinatorId = requesterRole == Coordinator ? requesterId : coordinadorIdFiltro;
+        if (resolvedCoordinatorId.HasValue)
         {
-            var user = await _userRepository.GetByIdAsync(requesterId, cancellationToken);
+            var user = await _userRepository.GetByIdAsync(resolvedCoordinatorId.Value, cancellationToken);
             if (user is not null)
                 coordinador = new CoordinadorInfoDto(user.Id, user.FullName, user.Phone);
         }

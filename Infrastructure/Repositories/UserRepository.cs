@@ -35,12 +35,15 @@ public class UserRepository : IUserRepository
         await _context.Users.AddAsync(user, cancellationToken);
     }
 
-    public async Task<(IEnumerable<User> Items, int TotalCount)> GetOperatorsAsync(int? coordinatorId, int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<(IEnumerable<User> Items, int TotalCount)> GetOperatorsAsync(int? coordinatorId, int page, int pageSize, string? nombre, CancellationToken cancellationToken = default)
     {
         var query = _context.Users.Include(u => u.Role).Where(u => u.Role.Name == Operator);
 
         if (coordinatorId.HasValue)
             query = query.Where(u => u.CoordinatorId == coordinatorId.Value);
+
+        if (!string.IsNullOrWhiteSpace(nombre))
+            query = query.Where(u => u.FullName.Contains(nombre));
 
         var totalCount = await query.CountAsync(cancellationToken);
 

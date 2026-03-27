@@ -17,7 +17,7 @@ public class GetOperators
         _currentUserService = currentUserService;
     }
 
-    public async Task<PaginatedResultDto<UserListItemDto>> ExecuteAsync(PaginationQueryDto query,
+    public async Task<PaginatedResultDto<UserListItemDto>> ExecuteAsync(PaginationQueryDto query, string? nombre,
         CancellationToken cancellationToken = default)
     {
         // coordinator sees only their operators, admin sees all
@@ -26,7 +26,7 @@ public class GetOperators
             : (int?)null;
 
         var (items, totalCount) =
-            await _userRepository.GetOperatorsAsync(coordinatorId, query.Page, query.PageSize, cancellationToken);
+            await _userRepository.GetOperatorsAsync(coordinatorId, query.Page, query.PageSize, nombre, cancellationToken);
 
         return new PaginatedResultDto<UserListItemDto>
         {

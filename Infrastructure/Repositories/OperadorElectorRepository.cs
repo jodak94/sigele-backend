@@ -46,7 +46,10 @@ public class OperadorElectorRepository : IOperadorElectorRepository
                 oe.DisponibleMiembroMesa,
                 oe.RequiereTransporte,
                 oe.NroTelefono,
-                oe.DireccionRecogida
+                oe.DireccionRecogida,
+                oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
+                oe.Elector.Mesa,
+                oe.Elector.Orden
             ))
             .ToListAsync(cancellationToken);
     }
@@ -72,23 +75,6 @@ public class OperadorElectorRepository : IOperadorElectorRepository
                 oe.NroTelefono,
                 oe.DireccionRecogida,
                 new OperadorBasicoDto(oe.UserId, oe.User.FullName, oe.User.Email, oe.User.Phone)
-            ))
-            .ToListAsync(cancellationToken);
-    }
-
-    public async Task<IEnumerable<ListaAsistenciaItemDto>> GetListaAsistenciaAsync(int operadorId, CancellationToken cancellationToken = default)
-    {
-        return await _context.OperadorElectores
-            .Where(oe => oe.UserId == operadorId && oe.IsActive)
-            .OrderBy(oe => oe.Elector.Apellido)
-            .ThenBy(oe => oe.Elector.Nombre)
-            .Select(oe => new ListaAsistenciaItemDto(
-                oe.Elector.NumeroCed,
-                (oe.Elector.Apellido + " " + oe.Elector.Nombre).Trim(),
-                oe.NroTelefono,
-                oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
-                oe.Elector.Mesa,
-                oe.Elector.Orden
             ))
             .ToListAsync(cancellationToken);
     }

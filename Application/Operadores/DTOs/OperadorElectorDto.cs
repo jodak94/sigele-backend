@@ -8,5 +8,8 @@ public record OperadorElectorDto(
     bool DisponibleMiembroMesa,
     bool RequiereTransporte,
     string NroTelefono,
-    string? DireccionRecogida
+    string? DireccionRecogida,
+    string? LocalVotacion,
+    short? Mesa,
+    short? Orden
 );

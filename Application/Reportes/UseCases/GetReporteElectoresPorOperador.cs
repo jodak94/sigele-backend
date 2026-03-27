@@ -1,3 +1,4 @@
+using static Application.Common.Constants.Roles;
 using Application.Common.Interfaces;
 using Application.Operadores.Interfaces;
 using Application.Reportes.DTOs;
@@ -8,8 +9,8 @@ namespace Application.Reportes.UseCases;
 public class GetReporteElectoresPorOperador
 {
     private readonly IOperadorElectorRepository _operadorElectorRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly ICurrentUserService _currentUserService;
+    private readonly IUserRepository            _userRepository;
+    private readonly ICurrentUserService        _currentUserService;
 
     public GetReporteElectoresPorOperador(
         IOperadorElectorRepository operadorElectorRepository,
@@ -17,27 +18,45 @@ public class GetReporteElectoresPorOperador
         ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;
-        _userRepository = userRepository;
-        _currentUserService = currentUserService;
+        _userRepository            = userRepository;
+        _currentUserService        = currentUserService;
     }
 
-    public async Task<ReporteElectoresResult> ExecuteAsync(CancellationToken cancellationToken = default)
+    public async Task<ReporteElectoresResult> ExecuteAsync(int? operadorIdParam, CancellationToken cancellationToken = default)
     {
-        var operadorId = _currentUserService.UserId;
+        var requesterId   = _currentUserService.UserId;
+        var requesterRole = _currentUserService.Role;
+        var tenantId      = _currentUserService.TenantId;
+
+        // Operador ignora el parámetro y siempre usa su propia sesión
+        var operadorId = requesterRole == Operator ? requesterId : (operadorIdParam ?? requesterId);
 
         var operador = await _userRepository.GetByIdAsync(operadorId, cancellationToken);
+        if (operador is null || operador.TenantId != tenantId)
+            throw new KeyNotFoundException("Operador no encontrado.");
+
+        var autorizado = requesterRole switch
+        {
+            Admin       => true,
+            Coordinator => operador.CoordinatorId == requesterId,
+            Operator    => true, // ya forzamos su propio id arriba
+            _           => false
+        };
+
+        if (!autorizado)
+            throw new UnauthorizedAccessException("No tiene permiso para generar este reporte.");
+
         var electores = await _operadorElectorRepository.GetByOperadorAsync(operadorId, cancellationToken);
 
         var dtos = electores.Select(e => new ElectorReporteDto(
-            e.Nombre ?? "",
-            e.Apellido ?? "",
             e.NumeroCed,
-            e.NroTelefono,
-            e.DisponibleMiembroMesa,
-            e.RequiereTransporte,
-            e.DireccionRecogida
+            e.Nombre   ?? "",
+            e.Apellido ?? "",
+            e.LocalVotacion,
+            e.Mesa,
+            e.Orden
         ));
 
-        return new ReporteElectoresResult(operador?.FullName ?? "Operador", dtos);
+        return new ReporteElectoresResult(operador.FullName, dtos);
     }
 }

@@ -51,9 +51,9 @@ public class UsersController : ControllerBase
 
     [HttpGet]
     [RequiresPermission(Permissions.Users.Read)]
-    public async Task<IActionResult> GetOperators([FromQuery] PaginationQueryDto query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetOperators([FromQuery] PaginationQueryDto query, [FromQuery] string? nombre, CancellationToken cancellationToken)
     {
-        var result = await _getOperators.ExecuteAsync(query, cancellationToken);
+        var result = await _getOperators.ExecuteAsync(query, nombre, cancellationToken);
         return Ok(result);
     }
 

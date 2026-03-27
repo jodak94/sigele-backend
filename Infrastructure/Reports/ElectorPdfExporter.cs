@@ -8,7 +8,7 @@ namespace Infrastructure.Reports;
 
 public class ElectorPdfExporter : IReportExporter
 {
-    public string ContentType => "application/pdf";
+    public string ContentType   => "application/pdf";
     public string FileExtension => "pdf";
 
     public byte[] Export(ReporteElectoresResult reporte)
@@ -19,7 +19,7 @@ public class ElectorPdfExporter : IReportExporter
         {
             container.Page(page =>
             {
-                page.Size(PageSizes.A4);
+                page.Size(PageSizes.A4.Landscape());
                 page.Margin(1.5f, Unit.Centimetre);
                 page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Arial"));
 
@@ -52,71 +52,56 @@ public class ElectorPdfExporter : IReportExporter
                     {
                         table.ColumnsDefinition(cols =>
                         {
-                            cols.RelativeColumn(5);  // ELECTOR
-                            cols.RelativeColumn(2);  // CONTACTO
-                            cols.RelativeColumn(2);  // ETIQUETAS
+                            cols.RelativeColumn(2);  // Nro Doc
+                            cols.RelativeColumn(3);  // Nombre
+                            cols.RelativeColumn(3);  // Apellido
+                            cols.RelativeColumn(4);  // Local
+                            cols.RelativeColumn(1);  // Mesa
+                            cols.RelativeColumn(1);  // Orden
+                            cols.RelativeColumn(3);  // Firma / Asistencia
                         });
 
-                        // Encabezado de tabla
                         table.Header(header =>
                         {
                             void HeaderCell(string text) =>
                                 header.Cell()
                                     .Background(Colors.Grey.Lighten3)
                                     .PaddingVertical(6)
-                                    .PaddingHorizontal(8)
+                                    .PaddingHorizontal(6)
                                     .Text(text)
                                     .Bold()
                                     .FontSize(8)
                                     .FontColor(Colors.Grey.Darken2);
 
-                            HeaderCell("ELECTOR");
-                            HeaderCell("CONTACTO");
-                            HeaderCell("ETIQUETAS");
+                            HeaderCell("NRO DOC");
+                            HeaderCell("NOMBRE");
+                            HeaderCell("APELLIDO");
+                            HeaderCell("LOCAL DE VOTACIÓN");
+                            HeaderCell("MESA");
+                            HeaderCell("ORDEN");
+                            HeaderCell("FIRMA / ASISTENCIA");
                         });
 
-                        // Filas de datos
                         foreach (var e in reporte.Electores)
                         {
-                            var nombreCompleto = $"{e.Apellido} {e.Nombre}".Trim().ToUpperInvariant();
+                            void DataCell(string text, bool center = false)
+                            {
+                                var cell = table.Cell()
+                                    .BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
+                                    .PaddingVertical(7)
+                                    .PaddingHorizontal(6);
 
-                            // ELECTOR
-                            table.Cell()
-                                .BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
-                                .PaddingVertical(10)
-                                .PaddingHorizontal(8)
-                                .Column(col =>
-                                {
-                                    col.Item().Text(nombreCompleto).Bold().FontSize(10);
-                                    col.Item().Text($"CI: {e.NroDocumento}").FontSize(9).FontColor(Colors.Grey.Darken1);
-                                    if (!string.IsNullOrWhiteSpace(e.Direccion))
-                                    {
-                                        col.Item().PaddingTop(2).Text(e.Direccion).FontSize(9).FontColor("#e53e3e");
-                                    }
-                                });
+                                var txt = cell.Text(text).FontSize(9);
+                                if (center) txt.FontColor(Colors.Grey.Darken1);
+                            }
 
-                            // CONTACTO
-                            table.Cell()
-                                .BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
-                                .PaddingVertical(10)
-                                .PaddingHorizontal(8)
-                                .AlignMiddle()
-                                .Text(e.NroTelefono)
-                                .FontSize(9);
-
-                            // ETIQUETAS
-                            table.Cell()
-                                .BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
-                                .PaddingVertical(10)
-                                .PaddingHorizontal(8)
-                                .AlignMiddle()
-                                .Column(col =>
-                                {
-                                    if (e.MiembroMesa)
-                                        col.Item().Text("Mesa").FontSize(9).FontColor(Colors.Grey.Medium);
-                                    if (e.RequiereTransporte)
-                                        col.Item().Text("Transporte").FontSize(9).FontColor(Colors.Grey.Medium);
-                                });
+                            DataCell(e.NroDocumento.ToString());
+                            DataCell(e.Nombre);
+                            DataCell(e.Apellido);
+                            DataCell(e.LocalVotacion ?? "—");
+                            DataCell(e.Mesa?.ToString()  ?? "—", center: true);
+                            DataCell(e.Orden?.ToString() ?? "—", center: true);
+                            DataCell(""); // Firma / Asistencia
                         }
                     });
 

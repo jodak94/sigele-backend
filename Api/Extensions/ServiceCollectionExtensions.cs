@@ -53,10 +53,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ElectorXlsExporter>();
         services.AddScoped<ElectorPdfExporter>();
         services.AddScoped<IReportExporterFactory, ReportExporterFactory>();
-        services.AddScoped<ListaAsistenciaPdfExporter>();
-        services.AddScoped<ListaAsistenciaXlsExporter>();
-        services.AddScoped<IListaAsistenciaExporterFactory, ListaAsistenciaExporterFactory>();
-        services.AddScoped<ResumenOperadoresPdfExporter>();
+services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<ResumenOperadoresXlsExporter>();
         services.AddScoped<IResumenOperadoresExporterFactory, ResumenOperadoresExporterFactory>();
         services.AddScoped<DiaDPdfExporter>();
@@ -93,7 +90,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ActualizarElector>();
         services.AddScoped<RemoverElector>();
         services.AddScoped<GetReporteElectoresPorOperador>();
-        services.AddScoped<GetListaAsistencia>();
         services.AddScoped<GetResumenOperadores>();
         services.AddScoped<GetReporteDiaD>();
         services.AddScoped<GetReporteCandidatosMesa>();
