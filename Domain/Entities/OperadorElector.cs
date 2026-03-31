@@ -14,7 +14,10 @@ public class OperadorElector
     public bool IsActive { get; set; } = true;
     public DateTimeOffset? DeletedAt { get; set; }
 
+    public int? UbicacionId { get; set; }
+
     public User User { get; set; } = null!;
     public Elector Elector { get; set; } = null!;
     public Tenant Tenant { get; set; } = null!;
+    public Ubicacion? Ubicacion { get; set; }
 }

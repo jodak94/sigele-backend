@@ -17,6 +17,7 @@ public class OperadoresController : ControllerBase
     private readonly BuscarElectorAsignado _buscarElectorAsignado;
     private readonly ActualizarElector _actualizarElector;
     private readonly RemoverElector _removerElector;
+    private readonly GetElectorUbicaciones _getElectorUbicaciones;
     private readonly ICurrentUserService _currentUserService;
 
     public OperadoresController(
@@ -26,6 +27,7 @@ public class OperadoresController : ControllerBase
         BuscarElectorAsignado buscarElectorAsignado,
         ActualizarElector actualizarElector,
         RemoverElector removerElector,
+        GetElectorUbicaciones getElectorUbicaciones,
         ICurrentUserService currentUserService)
     {
         _asignarElector = asignarElector;
@@ -34,6 +36,7 @@ public class OperadoresController : ControllerBase
         _buscarElectorAsignado = buscarElectorAsignado;
         _actualizarElector = actualizarElector;
         _removerElector = removerElector;
+        _getElectorUbicaciones = getElectorUbicaciones;
         _currentUserService = currentUserService;
     }
 
@@ -127,5 +130,12 @@ public class OperadoresController : ControllerBase
         {
             return Forbid();
         }
+    }
+
+    [HttpGet("electores/ubicaciones")]
+    public async Task<IActionResult> GetElectorUbicaciones(CancellationToken cancellationToken)
+    {
+        var result = await _getElectorUbicaciones.ExecuteAsync(cancellationToken);
+        return Ok(result);
     }
 }

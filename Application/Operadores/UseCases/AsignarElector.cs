@@ -9,17 +9,20 @@ namespace Application.Operadores.UseCases;
 public class AsignarElector
 {
     private readonly IOperadorElectorRepository _operadorElectorRepository;
+    private readonly IUbicacionRepository _ubicacionRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
 
     public AsignarElector(
         IOperadorElectorRepository operadorElectorRepository,
+        IUbicacionRepository ubicacionRepository,
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
         ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;
+        _ubicacionRepository = ubicacionRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
@@ -40,7 +43,7 @@ public class AsignarElector
         var existente = await _operadorElectorRepository
             .GetByUserAndElectorAsync(operadorId, dto.ElectorId, includeInactive: true, cancellationToken);
 
-        if (existente != null)//Para el caso de soft delete y reactivacion
+        if (existente != null) //Para el caso de soft delete y reactivacion
         {
             existente.IsActive = true;
             existente.TenantId = tenantId;
@@ -48,6 +51,7 @@ public class AsignarElector
             existente.RequiereTransporte = dto.RequiereTransporte;
             existente.NroTelefono = dto.NroTelefono;
             existente.DireccionRecogida = dto.DireccionRecogida;
+            existente.Ubicacion = dto.Ubicacion is not null ? BuildUbicacion(dto.Ubicacion, tenantId) : null;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return;
@@ -61,10 +65,20 @@ public class AsignarElector
             DisponibleMiembroMesa = dto.DisponibleMiembroMesa,
             RequiereTransporte    = dto.RequiereTransporte,
             NroTelefono           = dto.NroTelefono,
-            DireccionRecogida     = dto.DireccionRecogida
+            DireccionRecogida     = dto.DireccionRecogida,
+            Ubicacion             = dto.Ubicacion is not null ? BuildUbicacion(dto.Ubicacion, tenantId) : null
         };
 
         await _operadorElectorRepository.AddAsync(operadorElector, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
+
+    private Ubicacion BuildUbicacion(UbicacionInputDto dto, int tenantId) => new()
+    {
+        Lat         = dto.Lat,
+        Lng         = dto.Lng,
+        Descripcion = dto.Descripcion,
+        TenantId    = tenantId,
+        CreatedBy   = _currentUserService.UserId
+    };
 }

@@ -25,6 +25,7 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         builder.HasIndex(t => t.Domain).IsUnique().HasFilter("domain IS NOT NULL");
         builder.Property(t => t.CreatedAt).HasDefaultValueSql("NOW()");
         builder.Property(t => t.IsActive).HasDefaultValue(true);
+        builder.Property(t => t.SoportaUbicacion).HasDefaultValue(false);
     }
     
 }

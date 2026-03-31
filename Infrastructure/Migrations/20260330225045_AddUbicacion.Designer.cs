@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260330225045_AddUbicacion")]
+    partial class AddUbicacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -275,18 +278,11 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("tenant_id");
 
-                    b.Property<int?>("UbicacionId")
-                        .HasColumnType("integer")
-                        .HasColumnName("ubicacion_id");
-
                     b.HasKey("UserId", "ElectorId")
                         .HasName("pk_operador_elector");
 
                     b.HasIndex("TenantId")
                         .HasDatabaseName("ix_operador_elector_tenant_id");
-
-                    b.HasIndex("UbicacionId")
-                        .HasDatabaseName("ix_operador_elector_ubicacion_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_operador_elector_user_id");
@@ -553,12 +549,6 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
-
-                    b.Property<bool>("SoportaUbicacion")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("soporta_ubicacion");
 
                     b.Property<string>("Subdomain")
                         .IsRequired()
@@ -920,12 +910,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_operador_elector_tenant_tenant_id");
 
-                    b.HasOne("Domain.Entities.Ubicacion", "Ubicacion")
-                        .WithMany()
-                        .HasForeignKey("UbicacionId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_operador_elector_ubicacion_ubicacion_id");
-
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -936,8 +920,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Elector");
 
                     b.Navigation("Tenant");
-
-                    b.Navigation("Ubicacion");
 
                     b.Navigation("User");
                 });
