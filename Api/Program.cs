@@ -93,7 +93,10 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("FrontendPolicy");
-app.UseMiddleware<TenantResolutionMiddleware>();
+app.UseWhen(
+    ctx => !ctx.Request.Path.StartsWithSegments("/api/meta"),
+    appBuilder => appBuilder.UseMiddleware<TenantResolutionMiddleware>()
+);
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<TenantValidationMiddleware>();
