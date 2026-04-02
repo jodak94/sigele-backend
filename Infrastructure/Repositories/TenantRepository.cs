@@ -14,6 +14,12 @@ public class TenantRepository : ITenantRepository
         _context = context;
     }
 
+    public Task<Tenant?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return _context.Tenants
+            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+    }
+
     public Task<Tenant?> GetByDomainAsync(string domain, CancellationToken cancellationToken = default)
     {
         return _context.Tenants

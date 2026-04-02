@@ -29,6 +29,12 @@ public class OperadorElectorConfiguration : IEntityTypeConfiguration<OperadorEle
             .HasForeignKey(oe => oe.TenantId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(oe => oe.Ubicacion)
+            .WithMany()
+            .HasForeignKey(oe => oe.UbicacionId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
+
         builder.HasIndex(oe => oe.UserId);
 
         // Un elector solo puede estar activo en un operador por tenant

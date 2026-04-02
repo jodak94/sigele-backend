@@ -11,5 +11,6 @@ public record OperadorElectorDto(
     string? DireccionRecogida,
     string? LocalVotacion,
     short? Mesa,
-    short? Orden
+    short? Orden,
+    UbicacionDto? Ubicacion
 );

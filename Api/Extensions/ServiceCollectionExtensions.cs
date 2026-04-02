@@ -48,6 +48,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<ITenantBrandingRepository, TenantBrandingRepository>();
         services.AddScoped<IOperadorElectorRepository, OperadorElectorRepository>();
+        services.AddScoped<IUbicacionRepository, UbicacionRepository>();
         services.AddScoped<IEstadisticasOperadoresRepository, EstadisticasOperadoresRepository>();
         services.AddScoped<IEstadisticasZonalesRepository, EstadisticasZonalesRepository>();
         services.AddScoped<ElectorXlsExporter>();
@@ -83,6 +84,7 @@ services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<GetEstadisticasPadronPublico>();
         services.AddScoped<ResetPassword>();
         services.AddScoped<AsignarElector>();
+        services.AddScoped<GetElectorUbicaciones>();
         services.AddScoped<GetElectoresDeOperador>();
         services.AddScoped<GetInfoDeOperadores>();
         services.AddScoped<BuscarElectorAsignado>();

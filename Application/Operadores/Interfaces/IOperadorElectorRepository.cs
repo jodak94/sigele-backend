@@ -17,4 +17,5 @@ public interface IOperadorElectorRepository
     Task<IEnumerable<CandidatoMesaFlatItemDto>> GetCandidatosMesaFlatAsync(int? coordinatorId, CancellationToken cancellationToken = default);
     Task<OperadorElector?> GetByUserAndElectorAsync(int userId, int electorId, bool includeInactive, CancellationToken cancellationToken = default);
     Task<IEnumerable<ResumenCoordinadorDto>> GetResumenCoordinadoresAsync(int tenantId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<ElectorUbicacionDto>> GetElectorUbicacionesAsync(int? operadorId, int? coordinadorId, int tenantId, CancellationToken cancellationToken = default);
 }

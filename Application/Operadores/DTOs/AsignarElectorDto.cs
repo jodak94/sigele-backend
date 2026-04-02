@@ -5,5 +5,6 @@ public record AsignarElectorDto(
     bool DisponibleMiembroMesa,
     bool RequiereTransporte,
     string NroTelefono,
-    string? DireccionRecogida
+    string? DireccionRecogida,
+    UbicacionInputDto? Ubicacion
 );

@@ -1,5 +1,6 @@
 ﻿using Application.Auth.Interfaces;
 using Application.Common.Interfaces;
+using Application.Tenants.Interfaces;
 using Application.Users.DTOs;
 using Application.Users.Interfaces;
 using Domain.Entities;
@@ -9,17 +10,19 @@ namespace Application.Auth.UseCases;
 public class Login
 {
     private readonly IAuthRepository _authRepository;
+    private readonly ITenantRepository _tenantRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtService _jwtService;
     private readonly ITenantService _tenantService;
 
-    public Login(IAuthRepository authRepository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IJwtService jwtService, ITenantService tenantService)
+    public Login(IAuthRepository authRepository, ITenantRepository tenantRepository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IJwtService jwtService, ITenantService tenantService)
     {
         _authRepository = authRepository;
+        _tenantRepository = tenantRepository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
-        _jwtService = jwtService;;
+        _jwtService = jwtService;
         _tenantService = tenantService;
     }
 
@@ -31,6 +34,8 @@ public class Login
         {
             throw new UnauthorizedAccessException("Invalid email or password");
         }
+
+        var tenant = await _tenantRepository.GetByIdAsync(tenantId, cancellationToken);
 
         var permissions = user.Role.Permissions.Select(p => p.Name).ToList();
         var accessToken = _jwtService.GenerateToken(user, permissions);
@@ -58,6 +63,10 @@ public class Login
                 Role = user.Role.Name,
                 MustChangePassword = user.MustChangePassword,
                 Permissions = permissions
+            },
+            TenantConfig = new TenantConfigDto
+            {
+                SoportaUbicacion = tenant?.SoportaUbicacion ?? false
             }
         };
     }

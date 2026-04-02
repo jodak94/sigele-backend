@@ -31,6 +31,7 @@ public class OperadorElectorRepository : IOperadorElectorRepository
     public Task<OperadorElector?> GetAsync(int operadorId, int electorId, CancellationToken cancellationToken = default)
     {
         return _context.OperadorElectores
+            .Include(oe => oe.Ubicacion)
             .FirstOrDefaultAsync(oe => oe.UserId == operadorId && oe.ElectorId == electorId, cancellationToken);
     }
 
@@ -49,7 +50,10 @@ public class OperadorElectorRepository : IOperadorElectorRepository
                 oe.DireccionRecogida,
                 oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
                 oe.Elector.Mesa,
-                oe.Elector.Orden
+                oe.Elector.Orden,
+                oe.Ubicacion != null
+                    ? new UbicacionDto(oe.Ubicacion.Lat, oe.Ubicacion.Lng, oe.Ubicacion.Descripcion)
+                    : null
             ))
             .ToListAsync(cancellationToken);
     }
@@ -188,5 +192,32 @@ public class OperadorElectorRepository : IOperadorElectorRepository
                 oe => oe.UserId == userId && oe.ElectorId == electorId,
                 cancellationToken
             );
+    }
+
+    public async Task<IEnumerable<ElectorUbicacionDto>> GetElectorUbicacionesAsync(
+        int? operadorId,
+        int? coordinadorId,
+        int tenantId,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _context.OperadorElectores
+            .Where(oe => oe.TenantId == tenantId && oe.UbicacionId != null);
+
+        if (operadorId.HasValue)
+            query = query.Where(oe => oe.UserId == operadorId.Value);
+        else if (coordinadorId.HasValue)
+            query = query.Where(oe => oe.User.CoordinatorId == coordinadorId.Value);
+
+        return await query
+            .Select(oe => new ElectorUbicacionDto(
+                oe.ElectorId,
+                oe.Elector.Nombre,
+                oe.Elector.Apellido,
+                oe.Elector.NumeroCed,
+                oe.Ubicacion!.Lat,
+                oe.Ubicacion!.Lng,
+                oe.Ubicacion!.Descripcion
+            ))
+            .ToListAsync(cancellationToken);
     }
 }
