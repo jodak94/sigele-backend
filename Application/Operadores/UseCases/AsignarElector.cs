@@ -52,6 +52,7 @@ public class AsignarElector
             existente.NroTelefono = dto.NroTelefono;
             existente.DireccionRecogida = dto.DireccionRecogida;
             existente.Ubicacion = dto.Ubicacion is not null ? BuildUbicacion(dto.Ubicacion, tenantId) : null;
+            existente.OperadorUbicacion = dto.OperadorUbicacion is not null ? BuildUbicacion(dto.OperadorUbicacion, tenantId) : null;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return;
@@ -66,7 +67,8 @@ public class AsignarElector
             RequiereTransporte    = dto.RequiereTransporte,
             NroTelefono           = dto.NroTelefono,
             DireccionRecogida     = dto.DireccionRecogida,
-            Ubicacion             = dto.Ubicacion is not null ? BuildUbicacion(dto.Ubicacion, tenantId) : null
+            Ubicacion             = dto.Ubicacion is not null ? BuildUbicacion(dto.Ubicacion, tenantId) : null,
+            OperadorUbicacion     = dto.OperadorUbicacion is not null ? BuildUbicacion(dto.OperadorUbicacion, tenantId) : null
         };
 
         await _operadorElectorRepository.AddAsync(operadorElector, cancellationToken);

@@ -17,6 +17,7 @@ public class TenantBrandingConfiguration : IEntityTypeConfiguration<TenantBrandi
         builder.Property(tb => tb.FaviconUrl).HasMaxLength(500);
         builder.Property(tb => tb.CandidateName).HasMaxLength(150);
         builder.Property(tb => tb.CandidateTitle).HasMaxLength(150);
+        builder.Property(tb => tb.Zona).HasMaxLength(150);
 
         builder.Property(tb => tb.IsActive).HasDefaultValue(true);
         builder.Property(tb => tb.CreatedAt).HasDefaultValueSql("NOW()");

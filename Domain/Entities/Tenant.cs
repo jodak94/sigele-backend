@@ -8,5 +8,6 @@ public class Tenant
     public string? Domain { get; set; }
     public bool IsActive { get; set; } = true;
     public bool SoportaUbicacion { get; set; } = false;
+    public DateTime? OnboardingUntil { get; set; }
     public DateTime? CreatedAt { get; set; }
 }

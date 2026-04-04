@@ -6,5 +6,6 @@ public record AsignarElectorDto(
     bool RequiereTransporte,
     string NroTelefono,
     string? DireccionRecogida,
-    UbicacionInputDto? Ubicacion
+    UbicacionInputDto? Ubicacion,
+    UbicacionInputDto? OperadorUbicacion
 );

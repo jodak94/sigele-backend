@@ -13,11 +13,13 @@ public class OperadorElectorConfiguration : IEntityTypeConfiguration<OperadorEle
         builder.Property(oe => oe.NroTelefono).IsRequired().HasMaxLength(20);
         builder.Property(oe => oe.DireccionRecogida).HasMaxLength(255);
         builder.Property(oe => oe.IsActive).HasDefaultValue(true);
+        builder.Property(oe => oe.CreatedAt).HasDefaultValueSql("NOW()");
 
         builder.HasOne(oe => oe.User)
             .WithMany()
             .HasForeignKey(oe => oe.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
 
         builder.HasOne(oe => oe.Elector)
             .WithMany()
@@ -32,6 +34,12 @@ public class OperadorElectorConfiguration : IEntityTypeConfiguration<OperadorEle
         builder.HasOne(oe => oe.Ubicacion)
             .WithMany()
             .HasForeignKey(oe => oe.UbicacionId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
+
+        builder.HasOne(oe => oe.OperadorUbicacion)
+            .WithMany()
+            .HasForeignKey(oe => oe.OperadorUbicacionId)
             .OnDelete(DeleteBehavior.SetNull)
             .IsRequired(false);
 

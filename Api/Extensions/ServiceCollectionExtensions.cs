@@ -2,6 +2,8 @@
 using Api.Services;
 using Application.Auth.Interfaces;
 using Application.Auth.UseCases;
+using Application.Auditoria.Interfaces;
+using Application.Auditoria.UseCases;
 using Application.Common.Interfaces;
 using Application.Electores.Interfaces;
 using Application.Electores.UseCases;
@@ -63,6 +65,7 @@ services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<CandidatosMesaPdfExporter>();
         services.AddScoped<CandidatosMesaXlsExporter>();
         services.AddScoped<ICandidatosMesaExporterFactory, CandidatosMesaExporterFactory>();
+        services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRoleRepository, RoleRepository>();
@@ -101,6 +104,9 @@ services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<GetRankingOperadores>();
         services.AddScoped<GetResumenCoordinadores>();
         services.AddScoped<GetTenantBranding>();
+        services.AddScoped<GetAlertas>();
+        services.AddScoped<GetMapaOperador>();
+        services.AddScoped<GetCaptacionesDeOperador>();
 
         return services;
     }

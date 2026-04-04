@@ -25,7 +25,8 @@ public class GetTenantBranding
             branding.SecondaryColor,
             branding.FaviconUrl,
             branding.CandidateName,
-            branding.CandidateTitle
+            branding.CandidateTitle,
+            branding.Zona
         );
     }
 }

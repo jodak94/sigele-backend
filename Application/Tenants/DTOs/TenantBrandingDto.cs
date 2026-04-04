@@ -6,5 +6,6 @@ public record TenantBrandingDto(
     string? SecondaryColor,
     string? FaviconUrl,
     string? CandidateName,
-    string? CandidateTitle
+    string? CandidateTitle,
+    string? Zona
 );

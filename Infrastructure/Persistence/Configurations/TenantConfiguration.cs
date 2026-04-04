@@ -26,6 +26,7 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         builder.Property(t => t.CreatedAt).HasDefaultValueSql("NOW()");
         builder.Property(t => t.IsActive).HasDefaultValue(true);
         builder.Property(t => t.SoportaUbicacion).HasDefaultValue(false);
+        builder.Property(t => t.OnboardingUntil).IsRequired(false);
     }
     
 }

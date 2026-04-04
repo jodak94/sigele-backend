@@ -16,6 +16,9 @@ public class TenantBranding
     public string? CandidateName { get; set; }
     public string? CandidateTitle { get; set; }
 
+    // Zona
+    public string? Zona { get; set; }
+
     // Metadata
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
