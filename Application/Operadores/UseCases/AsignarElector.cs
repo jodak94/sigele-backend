@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using Application.Operadores.DTOs;
 using Application.Operadores.Interfaces;
+using Application.Tenants.Interfaces;
 using Application.Users.Interfaces;
 using Domain.Entities;
 
@@ -11,6 +12,7 @@ public class AsignarElector
     private readonly IOperadorElectorRepository _operadorElectorRepository;
     private readonly IUbicacionRepository _ubicacionRepository;
     private readonly IUserRepository _userRepository;
+    private readonly ITenantRepository _tenantRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
 
@@ -18,12 +20,14 @@ public class AsignarElector
         IOperadorElectorRepository operadorElectorRepository,
         IUbicacionRepository ubicacionRepository,
         IUserRepository userRepository,
+        ITenantRepository tenantRepository,
         IUnitOfWork unitOfWork,
         ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;
         _ubicacionRepository = ubicacionRepository;
         _userRepository = userRepository;
+        _tenantRepository = tenantRepository;
         _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
     }
@@ -31,6 +35,13 @@ public class AsignarElector
     public async Task ExecuteAsync(int operadorId, AsignarElectorDto dto, CancellationToken cancellationToken = default)
     {
         var tenantId = _currentUserService.TenantId;
+
+        var tenant = await _tenantRepository.GetByIdAsync(tenantId, cancellationToken);
+        if (tenant is null)
+            throw new KeyNotFoundException("Tenant no encontrado.");
+
+        if (tenant.CaptacionBloqueada)
+            throw new InvalidOperationException("La captación está bloqueada porque se alcanzó el límite del plan.");
 
         var operador = await _userRepository.GetByIdAsync(operadorId, cancellationToken);
         if (operador is null || operador.TenantId != tenantId)
@@ -55,6 +66,7 @@ public class AsignarElector
             existente.OperadorUbicacion = dto.OperadorUbicacion is not null ? BuildUbicacion(dto.OperadorUbicacion, tenantId) : null;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _tenantRepository.IncrementElectorCountAsync(tenantId, cancellationToken);
             return;
         }
 
@@ -73,6 +85,7 @@ public class AsignarElector
 
         await _operadorElectorRepository.AddAsync(operadorElector, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _tenantRepository.IncrementElectorCountAsync(tenantId, cancellationToken);
     }
 
     private Ubicacion BuildUbicacion(UbicacionInputDto dto, int tenantId) => new()

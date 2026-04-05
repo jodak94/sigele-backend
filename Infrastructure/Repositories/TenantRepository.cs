@@ -33,5 +33,27 @@ public class TenantRepository : ITenantRepository
             .Where(t => t.IsActive && t.Subdomain == subdomain)
             .FirstOrDefaultAsync(cancellationToken);
     }
-    
+
+    public Task<List<TenantPackage>> GetPackagesByTenantIdAsync(int tenantId, CancellationToken cancellationToken = default)
+    {
+        return _context.TenantPackages
+            .Where(p => p.TenantId == tenantId)
+            .OrderByDescending(p => p.PurchasedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task IncrementElectorCountAsync(int tenantId, CancellationToken cancellationToken = default)
+    {
+        return _context.Tenants
+            .Where(t => t.Id == tenantId)
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.ElectorCount, t => t.ElectorCount + 1), cancellationToken);
+    }
+
+    public Task DecrementElectorCountAsync(int tenantId, CancellationToken cancellationToken = default)
+    {
+        return _context.Tenants
+            .Where(t => t.Id == tenantId)
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.ElectorCount, t => t.ElectorCount - 1), cancellationToken);
+    }
+
 }

@@ -7,4 +7,7 @@ public interface ITenantRepository
     Task<Tenant?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<Tenant?> GetByDomainAsync(string domain, CancellationToken cancellationToken = default);
     Task<Tenant?> GetBySubdomainAsync(string subdomain, CancellationToken cancellationToken = default);
+    Task IncrementElectorCountAsync(int tenantId, CancellationToken cancellationToken = default);
+    Task DecrementElectorCountAsync(int tenantId, CancellationToken cancellationToken = default);
+    Task<List<TenantPackage>> GetPackagesByTenantIdAsync(int tenantId, CancellationToken cancellationToken = default);
 }

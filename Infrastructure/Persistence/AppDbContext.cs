@@ -30,6 +30,7 @@ public class AppDbContext : DbContext
     public DbSet<OperadorElector> OperadorElectores => Set<OperadorElector>();
     public DbSet<TenantBranding> TenantBrandings => Set<TenantBranding>();
     public DbSet<Ubicacion> Ubicaciones => Set<Ubicacion>();
+    public DbSet<TenantPackage> TenantPackages => Set<TenantPackage>();
     
     private int CurrentTenantId {
         get {

@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260405020500_AddElectorLimitAndAccessExpiryToTenant")]
+    partial class AddElectorLimitAndAccessExpiryToTenant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -690,59 +693,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("tenant_branding", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.TenantPackage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CicloElectoral")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("ciclo_electoral");
-
-                    b.Property<int?>("ElectoresAgregados")
-                        .HasColumnType("integer")
-                        .HasColumnName("electores_agregados");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("notes");
-
-                    b.Property<string>("PackageType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("package_type");
-
-                    b.Property<decimal>("Precio")
-                        .HasColumnType("numeric(10,2)")
-                        .HasColumnName("precio");
-
-                    b.Property<DateTime>("PurchasedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("purchased_at")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tenant_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tenant_package");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_tenant_package_tenant_id");
-
-                    b.ToTable("tenant_package", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.Ubicacion", b =>
                 {
                     b.Property<int>("Id")
@@ -1079,18 +1029,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_tenant_branding_tenant_tenant_id");
-
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TenantPackage", b =>
-                {
-                    b.HasOne("Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_tenant_package_tenant_tenant_id");
 
                     b.Navigation("Tenant");
                 });

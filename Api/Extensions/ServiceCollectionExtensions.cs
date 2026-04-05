@@ -104,6 +104,7 @@ services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<GetRankingOperadores>();
         services.AddScoped<GetResumenCoordinadores>();
         services.AddScoped<GetTenantBranding>();
+        services.AddScoped<GetPlanStatus>();
         services.AddScoped<GetAlertas>();
         services.AddScoped<GetMapaOperador>();
         services.AddScoped<GetCaptacionesDeOperador>();

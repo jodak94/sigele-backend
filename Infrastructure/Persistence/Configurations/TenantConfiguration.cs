@@ -27,6 +27,13 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         builder.Property(t => t.IsActive).HasDefaultValue(true);
         builder.Property(t => t.SoportaUbicacion).HasDefaultValue(false);
         builder.Property(t => t.OnboardingUntil).IsRequired(false);
+        builder.Property(t => t.ElectorLimit).IsRequired(false);
+        builder.Property(t => t.ElectorCount).HasDefaultValue(0);
+        builder.Property(t => t.AccessExpiresAt).IsRequired(false);
+        builder.Ignore(t => t.EsPlanFull);
+        builder.Ignore(t => t.GraceLimit);
+        builder.Ignore(t => t.CaptacionBloqueada);
+        builder.Ignore(t => t.EnGracia);
     }
     
 }
