@@ -86,6 +86,8 @@ services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<GetEstadisticasConsulta>();
         services.AddScoped<GetEstadisticasPadronPublico>();
         services.AddScoped<ResetPassword>();
+        services.AddScoped<AdminResetPassword>();
+        services.AddScoped<GetUsers>();
         services.AddScoped<AsignarElector>();
         services.AddScoped<GetElectorUbicaciones>();
         services.AddScoped<GetElectoresDeOperador>();

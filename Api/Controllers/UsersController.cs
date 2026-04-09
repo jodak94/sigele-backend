@@ -16,18 +16,23 @@ public class UsersController : ControllerBase
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly RegisterUser _registerUser;
+    private readonly GetUsers _getUsers;
     private readonly GetOperators _getOperators;
     private readonly GetCoordinators _getCoordinators;
     private readonly ResetPassword _resetPassword;
+    private readonly AdminResetPassword _adminResetPassword;
 
     public UsersController(RegisterUser registerUser, ICurrentUserService currentUserService,
-        GetOperators getOperators, GetCoordinators getCoordinators, ResetPassword resetPassword)
+        GetUsers getUsers, GetOperators getOperators, GetCoordinators getCoordinators,
+        ResetPassword resetPassword, AdminResetPassword adminResetPassword)
     {
         _registerUser = registerUser;
         _currentUserService = currentUserService;
+        _getUsers = getUsers;
         _getOperators = getOperators;
         _getCoordinators = getCoordinators;
         _resetPassword = resetPassword;
+        _adminResetPassword = adminResetPassword;
     }
 
     [HttpPost]
@@ -49,6 +54,20 @@ public class UsersController : ControllerBase
         }
     }
 
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllUsers([FromQuery] PaginationQueryDto query, [FromQuery] string? nombre, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _getUsers.ExecuteAsync(_currentUserService.Role, query, nombre, cancellationToken);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
     [HttpGet]
     [RequiresPermission(Permissions.Users.Read)]
     public async Task<IActionResult> GetOperators([FromQuery] PaginationQueryDto query, [FromQuery] string? nombre, CancellationToken cancellationToken)
@@ -63,6 +82,24 @@ public class UsersController : ControllerBase
     {
         var result = await _getCoordinators.ExecuteAsync(cancellationToken);
         return Ok(result);
+    }
+
+    [HttpPost("{id:int}/admin-reset-password")]
+    public async Task<IActionResult> AdminResetPassword(int id, [FromBody] AdminResetPasswordDto dto, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _adminResetPassword.ExecuteAsync(_currentUserService.Role, id, dto, cancellationToken);
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 
     [HttpPost("{id:int}/password")]

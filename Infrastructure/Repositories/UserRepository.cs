@@ -57,6 +57,25 @@ public class UserRepository : IUserRepository
         return (items, totalCount);
     }
 
+    public async Task<(IEnumerable<User> Items, int TotalCount)> GetAllAsync(int page, int pageSize, string? nombre, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Users.Include(u => u.Role).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(nombre))
+            query = query.Where(u => u.FullName.Contains(nombre));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(u => u.Role.Name)
+            .ThenBy(u => u.FullName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
+    }
+
     public async Task<IEnumerable<User>> GetCoordinatorsAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Users
@@ -65,4 +84,5 @@ public class UserRepository : IUserRepository
             .OrderBy(u => u.FullName)
             .ToListAsync(cancellationToken);
     }
+
 }

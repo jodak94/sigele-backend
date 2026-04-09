@@ -10,4 +10,5 @@ public interface IUserRepository
     Task AddAsync(User user, CancellationToken cancellationToken = default);
     Task<(IEnumerable<User> Items, int TotalCount)> GetOperatorsAsync(int? coordinatorId, int page, int pageSize, string? nombre, CancellationToken cancellationToken = default);
     Task<IEnumerable<User>> GetCoordinatorsAsync(CancellationToken cancellationToken = default);
+    Task<(IEnumerable<User> Items, int TotalCount)> GetAllAsync(int page, int pageSize, string? nombre, CancellationToken cancellationToken = default);
 }
