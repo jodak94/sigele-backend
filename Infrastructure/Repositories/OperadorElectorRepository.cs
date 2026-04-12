@@ -105,10 +105,11 @@ public class OperadorElectorRepository : IOperadorElectorRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<CandidatoMesaFlatItemDto>> GetCandidatosMesaFlatAsync(int? coordinatorId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<CandidatoMesaFlatItemDto>> GetCandidatosMesaFlatAsync(int? coordinatorId, int tenantId, CancellationToken cancellationToken = default)
     {
         return await _context.OperadorElectores
-            .Where(oe => oe.DisponibleMiembroMesa &&
+            .Where(oe => oe.TenantId == tenantId &&
+                         oe.DisponibleMiembroMesa &&
                          (!coordinatorId.HasValue || oe.User.CoordinatorId == coordinatorId.Value))
             .Select(oe => new CandidatoMesaFlatItemDto(
                 oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
@@ -121,10 +122,11 @@ public class OperadorElectorRepository : IOperadorElectorRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<DiaDFlatItemDto>> GetDiaDFlatAsync(int? coordinatorId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<DiaDFlatItemDto>> GetDiaDFlatAsync(int? coordinatorId, int tenantId, CancellationToken cancellationToken = default)
     {
         return await _context.OperadorElectores
-            .Where(oe => !coordinatorId.HasValue || oe.User.CoordinatorId == coordinatorId.Value)
+            .Where(oe => oe.TenantId == tenantId &&
+                         (!coordinatorId.HasValue || oe.User.CoordinatorId == coordinatorId.Value))
             .Select(oe => new DiaDFlatItemDto(
                 oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
                 oe.Elector.Mesa,

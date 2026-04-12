@@ -28,7 +28,7 @@ public class GetReporteDiaD
 
         int? coordinatorId = requesterRole == Coordinator ? requesterId : null;
 
-        var flat = await _operadorElectorRepository.GetDiaDFlatAsync(coordinatorId, cancellationToken);
+        var flat = await _operadorElectorRepository.GetDiaDFlatAsync(coordinatorId, _currentUserService.TenantId, cancellationToken);
 
         var locales = flat
             .GroupBy(x => x.LocalVotacion?.Trim() is { Length: > 0 } nombre ? nombre : "Sin Local Asignado")
