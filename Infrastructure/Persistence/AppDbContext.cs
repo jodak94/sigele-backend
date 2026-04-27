@@ -31,6 +31,7 @@ public class AppDbContext : DbContext
     public DbSet<TenantBranding> TenantBrandings => Set<TenantBranding>();
     public DbSet<Ubicacion> Ubicaciones => Set<Ubicacion>();
     public DbSet<TenantPackage> TenantPackages => Set<TenantPackage>();
+    public DbSet<Vehiculo> Vehiculos => Set<Vehiculo>();
     
     private int CurrentTenantId {
         get {

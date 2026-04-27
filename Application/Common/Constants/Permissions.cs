@@ -14,4 +14,12 @@ public static class Permissions
     {
         public const string Read = "consultas:read";
     }
+
+    public static class Vehiculos
+    {
+        public const string Read = "vehiculo:read";
+        public const string Create = "vehiculo:create";
+        public const string Update = "vehiculo:update";
+        public const string Delete = "vehiculo:delete";
+    }
 }
