@@ -7,5 +7,8 @@ public record AsignarElectorDto(
     string NroTelefono,
     string? DireccionRecogida,
     UbicacionInputDto? Ubicacion,
-    UbicacionInputDto? OperadorUbicacion
+    UbicacionInputDto? OperadorUbicacion,
+    bool SolicitudAlquiler = false,
+    int? CapacidadVehiculo = null,
+    decimal? MontoAlquilerVehiculo = null
 );

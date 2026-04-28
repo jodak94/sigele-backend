@@ -16,6 +16,8 @@ using Application.Users.Interfaces;
 using Application.Users.UseCases;
 using Application.Reportes.Interfaces;
 using Application.Reportes.UseCases;
+using Application.VehiculoRequests.Interfaces;
+using Application.VehiculoRequests.UseCases;
 using Application.Vehiculos.Interfaces;
 using Application.Vehiculos.UseCases;
 using Infrastructure.Auth;
@@ -69,6 +71,7 @@ services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<ICandidatosMesaExporterFactory, CandidatosMesaExporterFactory>();
         services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
         services.AddScoped<IVehiculoRepository, VehiculoRepository>();
+        services.AddScoped<IVehiculoRequestRepository, VehiculoRequestRepository>();
         services.AddScoped<VehiculosPdfExporter>();
         services.AddScoped<VehiculosXlsExporter>();
         services.AddScoped<IVehiculosExporterFactory, VehiculosExporterFactory>();
@@ -122,6 +125,9 @@ services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<GetVehiculos>();
         services.AddScoped<GetVehiculoById>();
         services.AddScoped<GetReporteVehiculos>();
+        services.AddScoped<GetVehiculoRequests>();
+        services.AddScoped<AprobarVehiculoRequest>();
+        services.AddScoped<RechazarVehiculoRequest>();
 
         return services;
     }

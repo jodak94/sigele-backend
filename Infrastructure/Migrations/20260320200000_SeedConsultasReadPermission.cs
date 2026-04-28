@@ -13,16 +13,16 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "permission",
                 columns: new[] { "id", "name", "description" },
-                values: new object[] { 4, "consultas:read", "Can read consultas statistics" });
+                values: new object[] { 5, "consultas:read", "Can read consultas statistics" });
 
             migrationBuilder.InsertData(
                 table: "permission_role",
                 columns: new[] { "permissions_id", "roles_id" },
                 values: new object[,]
                 {
-                    { 4, 1 }, // Admin
-                    { 4, 2 }, // Coordinador
-                    { 4, 3 }  // Operador
+                    { 5, 1 }, // Admin
+                    { 5, 2 }, // Coordinador
+                    { 5, 3 }  // Operador
                 });
         }
 
@@ -32,22 +32,22 @@ namespace Infrastructure.Migrations
             migrationBuilder.DeleteData(
                 table: "permission_role",
                 keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 4, 1 });
+                keyValues: new object[] { 5, 1 });
 
             migrationBuilder.DeleteData(
                 table: "permission_role",
                 keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 4, 2 });
+                keyValues: new object[] { 5, 2 });
 
             migrationBuilder.DeleteData(
                 table: "permission_role",
                 keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 4, 3 });
+                keyValues: new object[] { 5, 3 });
 
             migrationBuilder.DeleteData(
                 table: "permission",
                 keyColumn: "id",
-                keyValue: 4);
+                keyValue: 5);
         }
     }
 }

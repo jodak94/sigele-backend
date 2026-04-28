@@ -65,10 +65,10 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "name", "description" },
                 values: new object[,]
                 {
-                    { 5, "vehiculo:read",   "Can read vehicles" },
-                    { 6, "vehiculo:create", "Can create vehicles" },
-                    { 7, "vehiculo:update", "Can update vehicles" },
-                    { 8, "vehiculo:delete", "Can delete vehicles" }
+                    { 6, "vehiculo:read",   "Can read vehicles" },
+                    { 7, "vehiculo:create", "Can create vehicles" },
+                    { 8, "vehiculo:update", "Can update vehicles" },
+                    { 9, "vehiculo:delete", "Can delete vehicles" }
                 });
 
             // Admin (1) and Coordinador (2) get all vehicle permissions
@@ -77,53 +77,28 @@ namespace Infrastructure.Migrations
                 columns: new[] { "permissions_id", "roles_id" },
                 values: new object[,]
                 {
-                    { 5, 1 }, { 5, 2 },
                     { 6, 1 }, { 6, 2 },
                     { 7, 1 }, { 7, 2 },
-                    { 8, 1 }, { 8, 2 }
+                    { 8, 1 }, { 8, 2 },
+                    { 9, 1 }, { 9, 2 }
                 });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "permission_role",
-                keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 5, 1 });
-            migrationBuilder.DeleteData(
-                table: "permission_role",
-                keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 5, 2 });
-            migrationBuilder.DeleteData(
-                table: "permission_role",
-                keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 6, 1 });
-            migrationBuilder.DeleteData(
-                table: "permission_role",
-                keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 6, 2 });
-            migrationBuilder.DeleteData(
-                table: "permission_role",
-                keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 7, 1 });
-            migrationBuilder.DeleteData(
-                table: "permission_role",
-                keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 7, 2 });
-            migrationBuilder.DeleteData(
-                table: "permission_role",
-                keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 8, 1 });
-            migrationBuilder.DeleteData(
-                table: "permission_role",
-                keyColumns: new[] { "permissions_id", "roles_id" },
-                keyValues: new object[] { 8, 2 });
-
-            migrationBuilder.DeleteData("permission", "id", 5);
+            migrationBuilder.DeleteData("permission_role", new[] { "permissions_id", "roles_id" }, new object[] { 6, 1 });
+            migrationBuilder.DeleteData("permission_role", new[] { "permissions_id", "roles_id" }, new object[] { 6, 2 });
+            migrationBuilder.DeleteData("permission_role", new[] { "permissions_id", "roles_id" }, new object[] { 7, 1 });
+            migrationBuilder.DeleteData("permission_role", new[] { "permissions_id", "roles_id" }, new object[] { 7, 2 });
+            migrationBuilder.DeleteData("permission_role", new[] { "permissions_id", "roles_id" }, new object[] { 8, 1 });
+            migrationBuilder.DeleteData("permission_role", new[] { "permissions_id", "roles_id" }, new object[] { 8, 2 });
+            migrationBuilder.DeleteData("permission_role", new[] { "permissions_id", "roles_id" }, new object[] { 9, 1 });
+            migrationBuilder.DeleteData("permission_role", new[] { "permissions_id", "roles_id" }, new object[] { 9, 2 });
             migrationBuilder.DeleteData("permission", "id", 6);
             migrationBuilder.DeleteData("permission", "id", 7);
             migrationBuilder.DeleteData("permission", "id", 8);
+            migrationBuilder.DeleteData("permission", "id", 9);
 
             migrationBuilder.DropTable(
                 name: "vehiculo");

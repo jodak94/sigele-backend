@@ -15,6 +15,11 @@ public class ElectorRepository : IElectorRepository
         _context = context;
     }
 
+    public async Task<Elector?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Electores.FindAsync([id], cancellationToken);
+    }
+
     public async Task<IEnumerable<(Elector Elector, Seccional? Seccional)>> GetByNumeroCedAsync(int numeroCed, CancellationToken cancellationToken = default)
     {
         var electores = await _context.Electores

@@ -1,8 +1,10 @@
 using Application.Common.Interfaces;
+using Application.Electores.Interfaces;
 using Application.Operadores.DTOs;
 using Application.Operadores.Interfaces;
 using Application.Tenants.Interfaces;
 using Application.Users.Interfaces;
+using Application.VehiculoRequests.Interfaces;
 using Domain.Entities;
 
 namespace Application.Operadores.UseCases;
@@ -13,6 +15,8 @@ public class AsignarElector
     private readonly IUbicacionRepository _ubicacionRepository;
     private readonly IUserRepository _userRepository;
     private readonly ITenantRepository _tenantRepository;
+    private readonly IElectorRepository _electorRepository;
+    private readonly IVehiculoRequestRepository _vehiculoRequestRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
 
@@ -21,6 +25,8 @@ public class AsignarElector
         IUbicacionRepository ubicacionRepository,
         IUserRepository userRepository,
         ITenantRepository tenantRepository,
+        IElectorRepository electorRepository,
+        IVehiculoRequestRepository vehiculoRequestRepository,
         IUnitOfWork unitOfWork,
         ICurrentUserService currentUserService)
     {
@@ -28,6 +34,8 @@ public class AsignarElector
         _ubicacionRepository = ubicacionRepository;
         _userRepository = userRepository;
         _tenantRepository = tenantRepository;
+        _electorRepository = electorRepository;
+        _vehiculoRequestRepository = vehiculoRequestRepository;
         _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
     }
@@ -54,7 +62,7 @@ public class AsignarElector
         var existente = await _operadorElectorRepository
             .GetByUserAndElectorAsync(operadorId, dto.ElectorId, includeInactive: true, cancellationToken);
 
-        if (existente != null) //Para el caso de soft delete y reactivacion
+        if (existente != null)
         {
             existente.IsActive = true;
             existente.TenantId = tenantId;
@@ -64,6 +72,9 @@ public class AsignarElector
             existente.DireccionRecogida = dto.DireccionRecogida;
             existente.Ubicacion = dto.Ubicacion is not null ? BuildUbicacion(dto.Ubicacion, tenantId) : null;
             existente.OperadorUbicacion = dto.OperadorUbicacion is not null ? BuildUbicacion(dto.OperadorUbicacion, tenantId) : null;
+
+            if (dto.SolicitudAlquiler && dto.CapacidadVehiculo.HasValue)
+                await AddVehiculoRequestAsync(dto, operadorId, tenantId, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _tenantRepository.IncrementElectorCountAsync(tenantId, cancellationToken);
@@ -84,8 +95,35 @@ public class AsignarElector
         };
 
         await _operadorElectorRepository.AddAsync(operadorElector, cancellationToken);
+
+        if (dto.SolicitudAlquiler && dto.CapacidadVehiculo.HasValue)
+            await AddVehiculoRequestAsync(dto, operadorId, tenantId, cancellationToken);
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         await _tenantRepository.IncrementElectorCountAsync(tenantId, cancellationToken);
+    }
+
+    private async Task AddVehiculoRequestAsync(AsignarElectorDto dto, int operadorId, int tenantId, CancellationToken cancellationToken)
+    {
+        var elector = await _electorRepository.GetByIdAsync(dto.ElectorId, cancellationToken);
+        if (elector is null) return;
+
+        var nombreDueno = $"{elector.Nombre} {elector.Apellido}".Trim();
+
+        var solicitud = new VehiculoRequest
+        {
+            ElectorId     = dto.ElectorId,
+            OperadorId    = operadorId,
+            NombreDueno   = nombreDueno,
+            TelefonoDueno = dto.NroTelefono,
+            Capacidad     = dto.CapacidadVehiculo!.Value,
+            MontoAlquiler = dto.MontoAlquilerVehiculo,
+            Estado        = EstadoSolicitudVehiculo.Pendiente,
+            TenantId      = tenantId,
+            CreatedBy     = operadorId
+        };
+
+        await _vehiculoRequestRepository.AddAsync(solicitud, cancellationToken);
     }
 
     private Ubicacion BuildUbicacion(UbicacionInputDto dto, int tenantId) => new()
