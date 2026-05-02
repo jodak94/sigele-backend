@@ -28,4 +28,5 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 public class DesignTimeTenantService : ITenantService
 {
     public int GetCurrentTenantId() => 0;
+    public string GetCurrentTenantSubdomain() => string.Empty;
 }

@@ -12,5 +12,9 @@ public record OperadorElectorDto(
     string? LocalVotacion,
     short? Mesa,
     short? Orden,
-    UbicacionDto? Ubicacion
+    UbicacionDto? Ubicacion,
+    string? Ciudad,
+    string? Departamento,
+    string? MensajeWhatsapp,
+    string? TelefonoWhatsapp
 );

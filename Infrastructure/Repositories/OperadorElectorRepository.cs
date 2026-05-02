@@ -39,21 +39,33 @@ public class OperadorElectorRepository : IOperadorElectorRepository
     {
         return await _context.OperadorElectores
             .Where(oe => oe.UserId == operadorId && oe.IsActive)
-            .Select(oe => new OperadorElectorDto(
-                oe.ElectorId,
-                oe.Elector.Nombre,
-                oe.Elector.Apellido,
-                oe.Elector.NumeroCed,
-                oe.DisponibleMiembroMesa,
-                oe.RequiereTransporte,
-                oe.NroTelefono,
-                oe.DireccionRecogida,
-                oe.Elector.Local != null ? oe.Elector.Local.NombreLoc : null,
-                oe.Elector.Mesa,
-                oe.Elector.Orden,
-                oe.Ubicacion != null
-                    ? new UbicacionDto(oe.Ubicacion.Lat, oe.Ubicacion.Lng, oe.Ubicacion.Descripcion)
-                    : null
+            .Select(oe => new
+            {
+                Oe = oe,
+                Seccional = _context.Seccionales.FirstOrDefault(s =>
+                    s.CodigoDep == oe.Elector.CodDpto &&
+                    s.CodigoDis == oe.Elector.CodDist &&
+                    s.CodigoSec == oe.Elector.CodigoSec)
+            })
+            .Select(x => new OperadorElectorDto(
+                x.Oe.ElectorId,
+                x.Oe.Elector.Nombre,
+                x.Oe.Elector.Apellido,
+                x.Oe.Elector.NumeroCed,
+                x.Oe.DisponibleMiembroMesa,
+                x.Oe.RequiereTransporte,
+                x.Oe.NroTelefono,
+                x.Oe.DireccionRecogida,
+                x.Oe.Elector.Local != null ? x.Oe.Elector.Local.NombreLoc : null,
+                x.Oe.Elector.Mesa,
+                x.Oe.Elector.Orden,
+                x.Oe.Ubicacion != null
+                    ? new UbicacionDto(x.Oe.Ubicacion.Lat, x.Oe.Ubicacion.Lng, x.Oe.Ubicacion.Descripcion)
+                    : null,
+                x.Seccional != null ? x.Seccional.NDistrito : null,
+                x.Seccional != null ? x.Seccional.NDepart : null,
+                null,
+                null
             ))
             .ToListAsync(cancellationToken);
     }

@@ -3,4 +3,5 @@
 public interface ITenantService
 {
     int GetCurrentTenantId();
+    string GetCurrentTenantSubdomain();
 }

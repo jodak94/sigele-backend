@@ -20,4 +20,13 @@ public class TenantService : ITenantService
 
         return tenant.Id;
     }
+
+    public string GetCurrentTenantSubdomain()
+    {
+        var tenant = _httpContextAccessor.HttpContext?.Items["Tenant"] as Tenant;
+        if (tenant is null)
+            throw new UnauthorizedAccessException("Tenant not resolved.");
+
+        return tenant.Subdomain;
+    }
 }
