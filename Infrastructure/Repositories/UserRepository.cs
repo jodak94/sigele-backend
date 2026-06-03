@@ -43,7 +43,7 @@ public class UserRepository : IUserRepository
             query = query.Where(u => u.CoordinatorId == coordinatorId.Value);
 
         if (!string.IsNullOrWhiteSpace(nombre))
-            query = query.Where(u => u.FullName.Contains(nombre));
+            query = query.Where(u => u.FullName.ToLower().Contains(nombre.ToLower()));
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -62,7 +62,7 @@ public class UserRepository : IUserRepository
         var query = _context.Users.Include(u => u.Role).AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(nombre))
-            query = query.Where(u => u.FullName.Contains(nombre));
+            query = query.Where(u => u.FullName.ToLower().Contains(nombre.ToLower()));
 
         var totalCount = await query.CountAsync(cancellationToken);
 
