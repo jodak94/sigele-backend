@@ -7,11 +7,11 @@ namespace Application.Reportes.UseCases;
 
 public class GetReporteCandidatosMesa
 {
-    private readonly IOperadorElectorRepository _operadorElectorRepository;
+    private readonly IOperadorPersonaRepository _operadorElectorRepository;
     private readonly ICurrentUserService        _currentUserService;
 
     public GetReporteCandidatosMesa(
-        IOperadorElectorRepository operadorElectorRepository,
+        IOperadorPersonaRepository operadorElectorRepository,
         ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;

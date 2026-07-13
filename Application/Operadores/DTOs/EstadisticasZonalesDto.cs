@@ -1,12 +1,15 @@
 namespace Application.Operadores.DTOs;
 
-public class SeccionalCaptacionDto
+public class ZonaCaptacionDto
 {
-    public short? CodigoSeccional { get; set; }
-    public int    TotalElectores  { get; set; }
+    public short?  Depart         { get; set; }
+    public short?  Distrito       { get; set; }
+    public short?  Zona           { get; set; }
+    public string? Descripcion    { get; set; }
+    public int     TotalElectores { get; set; }
 }
 
 public record ResumenZonalCaptacionDto(
-    SeccionalCaptacionDto? ZonaMayorCaptacion,
-    SeccionalCaptacionDto? ZonaMenorCaptacion,
-    double                 PromedioPorSeccional);
+    ZonaCaptacionDto? ZonaMayorCaptacion,
+    ZonaCaptacionDto? ZonaMenorCaptacion,
+    double             PromedioPorZona);

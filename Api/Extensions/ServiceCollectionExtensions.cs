@@ -16,6 +16,7 @@ using Application.Users.Interfaces;
 using Application.Users.UseCases;
 using Application.Reportes.Interfaces;
 using Application.Reportes.UseCases;
+using Application.Padron;
 using Application.VehiculoRequests.Interfaces;
 using Application.VehiculoRequests.UseCases;
 using Application.Vehiculos.Interfaces;
@@ -50,10 +51,13 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IElectorRepository, ElectorRepository>();
+        services.AddScoped<IElectorPadronRepository, PersonaPadronRepository>();
         services.AddScoped<IElectorConsultaRepository, ElectorConsultaRepository>();
         services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<ITenantBrandingRepository, TenantBrandingRepository>();
         services.AddScoped<IOperadorElectorRepository, OperadorElectorRepository>();
+        services.AddScoped<IOperadorPersonaRepository, OperadorPersonaRepository>();
+        services.AddScoped<IPersonaRepository, PersonaRepository>();
         services.AddScoped<IUbicacionRepository, UbicacionRepository>();
         services.AddScoped<IEstadisticasOperadoresRepository, EstadisticasOperadoresRepository>();
         services.AddScoped<IEstadisticasZonalesRepository, EstadisticasZonalesRepository>();

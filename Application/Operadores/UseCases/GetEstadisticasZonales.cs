@@ -33,16 +33,16 @@ public class GetEstadisticasZonales
         return (tenantId, coordinatorId);
     }
 
-    public async Task<IEnumerable<SeccionalCaptacionDto>> GetListaAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ZonaCaptacionDto>> GetListaAsync(CancellationToken cancellationToken = default)
     {
         var (tenantId, coordinatorId) = ResolveScope();
-        return await _repository.GetSecccionalesCaptacionAsync(tenantId, coordinatorId, cancellationToken);
+        return await _repository.GetZonasCaptacionAsync(tenantId, coordinatorId, cancellationToken);
     }
 
     public async Task<ResumenZonalCaptacionDto> GetResumenAsync(CancellationToken cancellationToken = default)
     {
         var (tenantId, coordinatorId) = ResolveScope();
-        var lista = (await _repository.GetSecccionalesCaptacionAsync(tenantId, coordinatorId, cancellationToken)).ToList();
+        var lista = (await _repository.GetZonasCaptacionAsync(tenantId, coordinatorId, cancellationToken)).ToList();
 
         if (lista.Count == 0)
             return new ResumenZonalCaptacionDto(null, null, 0);

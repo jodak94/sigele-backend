@@ -8,13 +8,13 @@ namespace Application.Operadores.UseCases;
 
 public class GetElectoresDeOperador
 {
-    private readonly IOperadorElectorRepository _operadorElectorRepository;
+    private readonly IOperadorPersonaRepository _operadorElectorRepository;
     private readonly IUserRepository _userRepository;
     private readonly ICurrentUserService _currentUserService;
     private readonly ITenantService _tenantService;
 
     public GetElectoresDeOperador(
-        IOperadorElectorRepository operadorElectorRepository,
+        IOperadorPersonaRepository operadorElectorRepository,
         IUserRepository userRepository,
         ICurrentUserService currentUserService,
         ITenantService tenantService)

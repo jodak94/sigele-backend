@@ -7,11 +7,11 @@ namespace Application.Operadores.UseCases;
 
 public class BuscarElectorAsignado
 {
-    private readonly IOperadorElectorRepository _operadorElectorRepository;
+    private readonly IOperadorPersonaRepository _operadorElectorRepository;
     private readonly ICurrentUserService _currentUserService;
 
     public BuscarElectorAsignado(
-        IOperadorElectorRepository operadorElectorRepository,
+        IOperadorPersonaRepository operadorElectorRepository,
         ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;

@@ -62,15 +62,25 @@ public class ElectorConsultaRepository : IElectorConsultaRepository
     public async Task<IEnumerable<TopLocalConsultadoDto>> GetTopLocalesConsultadosAsync(int tenantId, int top, CancellationToken cancellationToken = default)
     {
         const string sql = """
-            SELECT lv.nombre_loc AS LocalVotacion,
+            SELECT loc.descrip AS LocalVotacion,
                    COUNT(*)::bigint AS TotalBusquedas
             FROM elector_consulta ec
-            JOIN elector          e  ON e.numero_ced::text = ec.cedula
-            JOIN local_votacion   lv ON lv.secc_loc = e.sec_loc
+            JOIN persona p ON p.cedula::text = ec.cedula
+            JOIN LATERAL (
+                SELECT i.depart, i.distrito, i.zona, i.local
+                FROM inscripcion i
+                WHERE i.cedula = p.cedula
+                ORDER BY i.id DESC
+                LIMIT 1
+            ) ui ON true
+            JOIN localidad loc ON loc.depart   = ui.depart
+                               AND loc.distrito = ui.distrito
+                               AND loc.zona     = ui.zona
+                               AND loc.local    = ui.local
             WHERE ec.tenant_id   = @TenantId
               AND ec.encontrado  = true
-              AND lv.nombre_loc IS NOT NULL
-            GROUP BY lv.nombre_loc
+              AND loc.descrip IS NOT NULL
+            GROUP BY loc.descrip
             ORDER BY TotalBusquedas DESC
             LIMIT @Top
             """;

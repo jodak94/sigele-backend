@@ -7,13 +7,13 @@ namespace Application.Operadores.UseCases;
 
 public class ActualizarElector
 {
-    private readonly IOperadorElectorRepository _repository;
+    private readonly IOperadorPersonaRepository _repository;
     private readonly IUbicacionRepository _ubicacionRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
 
     public ActualizarElector(
-        IOperadorElectorRepository repository,
+        IOperadorPersonaRepository repository,
         IUbicacionRepository ubicacionRepository,
         IUnitOfWork unitOfWork,
         ICurrentUserService currentUserService)
@@ -24,11 +24,11 @@ public class ActualizarElector
         _currentUserService = currentUserService;
     }
 
-    public async Task ExecuteAsync(int electorId, ActualizarElectorDto dto, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(int cedula, ActualizarElectorDto dto, CancellationToken cancellationToken = default)
     {
         var operadorId = _currentUserService.UserId;
 
-        var registro = await _repository.GetAsync(operadorId, electorId, cancellationToken);
+        var registro = await _repository.GetAsync(operadorId, cedula, cancellationToken);
         if (registro is null || !registro.IsActive)
             throw new KeyNotFoundException("Asignación no encontrada.");
 

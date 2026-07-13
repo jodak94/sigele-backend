@@ -18,11 +18,6 @@ public class VehiculoRequestConfiguration : IEntityTypeConfiguration<VehiculoReq
         builder.Property(v => v.IsActive).HasDefaultValue(true);
         builder.Property(v => v.Estado).HasConversion<int>();
 
-        builder.HasOne(v => v.Elector)
-            .WithMany()
-            .HasForeignKey(v => v.ElectorId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         builder.HasOne(v => v.Operador)
             .WithMany()
             .HasForeignKey(v => v.OperadorId)

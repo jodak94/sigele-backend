@@ -15,20 +15,22 @@ public class ElectorDetailDto
     public short? Orden { get; set; }
     public short? CodigoSex { get; set; }
     public LocalDto? Local { get; set; }
-    public SeccionalDto? Seccional { get; set; }
+    public ZonaDto? Zona { get; set; }
 }
 
 public class LocalDto
 {
-    public int SeccLoc { get; set; }
+    public int CodigoLocal { get; set; }
     public string? NombreLoc { get; set; }
     public string? Direccion { get; set; }
 }
 
-public class SeccionalDto
+public class ZonaDto
 {
-    public string? NDepart { get; set; }
-    public string? NDistrito { get; set; }
-    public string? Descripcio { get; set; }
-    public string? Direccion { get; set; }
+    public short? Depart { get; set; }
+    public short? Distrito { get; set; }
+    public short? Zona { get; set; }
+    public string? NombreDepart { get; set; }
+    public string? NombreDistrito { get; set; }
+    public string? NombreZona { get; set; }
 }

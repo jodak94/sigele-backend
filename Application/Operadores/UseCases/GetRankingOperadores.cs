@@ -8,10 +8,10 @@ public record RankingOperadorDto(int UserId, string FullName, int TotalElectores
 
 public class GetRankingOperadores
 {
-    private readonly IOperadorElectorRepository _repository;
+    private readonly IOperadorPersonaRepository _repository;
     private readonly ICurrentUserService        _currentUserService;
 
-    public GetRankingOperadores(IOperadorElectorRepository repository, ICurrentUserService currentUserService)
+    public GetRankingOperadores(IOperadorPersonaRepository repository, ICurrentUserService currentUserService)
     {
         _repository         = repository;
         _currentUserService = currentUserService;

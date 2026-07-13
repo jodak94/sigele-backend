@@ -140,9 +140,9 @@ public class EstadisticasController : ControllerBase
         }
     }
 
-    [HttpGet("zonales/seccionales")]
+    [HttpGet("zonales/zonas")]
     [Authorize]
-    public async Task<IActionResult> GetSecccionalesCaptacion(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetZonasCaptacion(CancellationToken cancellationToken)
     {
         try
         {

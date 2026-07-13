@@ -7,11 +7,11 @@ namespace Application.Reportes.UseCases;
 
 public class GetReporteDiaD
 {
-    private readonly IOperadorElectorRepository _operadorElectorRepository;
+    private readonly IOperadorPersonaRepository _operadorElectorRepository;
     private readonly ICurrentUserService        _currentUserService;
 
     public GetReporteDiaD(
-        IOperadorElectorRepository operadorElectorRepository,
+        IOperadorPersonaRepository operadorElectorRepository,
         ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;

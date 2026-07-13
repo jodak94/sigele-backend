@@ -24,7 +24,7 @@ public class EstadisticasOperadoresRepository : IEstadisticasOperadoresRepositor
                 COUNT(*) FILTER (WHERE oe.is_active = true AND oe.disponible_miembro_mesa = true)::int AS CandidatosMesa,
                 COUNT(*) FILTER (WHERE oe.is_active = true AND oe.requiere_transporte = true)::int     AS RequierenTransporte,
                 COUNT(*) FILTER (WHERE oe.is_active = false)::int                                      AS Borrados
-            FROM operador_elector oe
+            FROM operador_persona oe
             JOIN "user" u ON u.id = oe.user_id
             JOIN role r   ON r.id = u.role_id
             WHERE oe.tenant_id   = @TenantId

@@ -13,7 +13,6 @@ public class VehiculoRequest : AuditableEntity
 {
     public int Id { get; set; }
     public int ElectorId { get; set; }
-    public Elector Elector { get; set; } = null!;
     public int OperadorId { get; set; }
     public User Operador { get; set; } = null!;
     public string NombreDueno { get; set; } = string.Empty;

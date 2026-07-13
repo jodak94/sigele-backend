@@ -3,6 +3,7 @@ using System.Reflection;
 using Application.Common.Interfaces;
 using Domain.Common;
 using Domain.Entities;
+using Domain.Entities.Padron;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -33,6 +34,13 @@ public class AppDbContext : DbContext
     public DbSet<TenantPackage> TenantPackages => Set<TenantPackage>();
     public DbSet<Vehiculo> Vehiculos => Set<Vehiculo>();
     public DbSet<VehiculoRequest> VehiculoRequests => Set<VehiculoRequest>();
+    public DbSet<OperadorPersona> OperadorPersonas => Set<OperadorPersona>();
+    public DbSet<Persona> Personas => Set<Persona>();
+    public DbSet<RcpInscripcion> RcpInscripciones => Set<RcpInscripcion>();
+    public DbSet<RcpDepartamento> RcpDepartamentos => Set<RcpDepartamento>();
+    public DbSet<RcpDistrito> RcpDistritos => Set<RcpDistrito>();
+    public DbSet<RcpZona> RcpZonas => Set<RcpZona>();
+    public DbSet<RcpLocalidad> RcpLocalidades => Set<RcpLocalidad>();
     
     private int CurrentTenantId {
         get {

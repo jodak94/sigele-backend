@@ -1,7 +1,7 @@
 using Application.Common.Interfaces;
-using Application.Electores.Interfaces;
 using Application.Operadores.DTOs;
 using Application.Operadores.Interfaces;
+using Application.Padron;
 using Application.Tenants.Interfaces;
 using Application.Users.Interfaces;
 using Application.VehiculoRequests.Interfaces;
@@ -11,30 +11,30 @@ namespace Application.Operadores.UseCases;
 
 public class AsignarElector
 {
-    private readonly IOperadorElectorRepository _operadorElectorRepository;
+    private readonly IOperadorPersonaRepository _operadorPersonaRepository;
     private readonly IUbicacionRepository _ubicacionRepository;
     private readonly IUserRepository _userRepository;
     private readonly ITenantRepository _tenantRepository;
-    private readonly IElectorRepository _electorRepository;
+    private readonly IPersonaRepository _personaRepository;
     private readonly IVehiculoRequestRepository _vehiculoRequestRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
 
     public AsignarElector(
-        IOperadorElectorRepository operadorElectorRepository,
+        IOperadorPersonaRepository operadorPersonaRepository,
         IUbicacionRepository ubicacionRepository,
         IUserRepository userRepository,
         ITenantRepository tenantRepository,
-        IElectorRepository electorRepository,
+        IPersonaRepository personaRepository,
         IVehiculoRequestRepository vehiculoRequestRepository,
         IUnitOfWork unitOfWork,
         ICurrentUserService currentUserService)
     {
-        _operadorElectorRepository = operadorElectorRepository;
+        _operadorPersonaRepository = operadorPersonaRepository;
         _ubicacionRepository = ubicacionRepository;
         _userRepository = userRepository;
         _tenantRepository = tenantRepository;
-        _electorRepository = electorRepository;
+        _personaRepository = personaRepository;
         _vehiculoRequestRepository = vehiculoRequestRepository;
         _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
@@ -55,12 +55,12 @@ public class AsignarElector
         if (operador is null || operador.TenantId != tenantId)
             throw new KeyNotFoundException("Operador no encontrado.");
 
-        var yaAsignado = await _operadorElectorRepository.ElectorActivoEnTenantAsync(dto.ElectorId, tenantId, cancellationToken);
+        var yaAsignado = await _operadorPersonaRepository.PersonaActivaEnTenantAsync(dto.ElectorId, tenantId, cancellationToken);
         if (yaAsignado)
             throw new InvalidOperationException("El elector ya está asignado a otro operador en este tenant.");
 
-        var existente = await _operadorElectorRepository
-            .GetByUserAndElectorAsync(operadorId, dto.ElectorId, includeInactive: true, cancellationToken);
+        var existente = await _operadorPersonaRepository
+            .GetByUserAndPersonaAsync(operadorId, dto.ElectorId, includeInactive: true, cancellationToken);
 
         if (existente != null)
         {
@@ -81,10 +81,10 @@ public class AsignarElector
             return;
         }
 
-        var operadorElector = new OperadorElector
+        var operadorPersona = new OperadorPersona
         {
             UserId                = operadorId,
-            ElectorId             = dto.ElectorId,
+            Cedula                = dto.ElectorId,
             TenantId              = tenantId,
             DisponibleMiembroMesa = dto.DisponibleMiembroMesa,
             RequiereTransporte    = dto.RequiereTransporte,
@@ -94,7 +94,7 @@ public class AsignarElector
             OperadorUbicacion     = dto.OperadorUbicacion is not null ? BuildUbicacion(dto.OperadorUbicacion, tenantId) : null
         };
 
-        await _operadorElectorRepository.AddAsync(operadorElector, cancellationToken);
+        await _operadorPersonaRepository.AddAsync(operadorPersona, cancellationToken);
 
         if (dto.SolicitudAlquiler && dto.CapacidadVehiculo.HasValue)
             await AddVehiculoRequestAsync(dto, operadorId, tenantId, cancellationToken);
@@ -105,10 +105,10 @@ public class AsignarElector
 
     private async Task AddVehiculoRequestAsync(AsignarElectorDto dto, int operadorId, int tenantId, CancellationToken cancellationToken)
     {
-        var elector = await _electorRepository.GetByIdAsync(dto.ElectorId, cancellationToken);
-        if (elector is null) return;
+        var persona = await _personaRepository.GetByCedulaAsync(dto.ElectorId, cancellationToken);
+        if (persona is null) return;
 
-        var nombreDueno = $"{elector.Nombre} {elector.Apellido}".Trim();
+        var nombreDueno = $"{persona.Nombre} {persona.Apellido}".Trim();
 
         var solicitud = new VehiculoRequest
         {

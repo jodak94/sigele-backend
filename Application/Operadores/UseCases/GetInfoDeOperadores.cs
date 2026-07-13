@@ -7,11 +7,11 @@ namespace Application.Operadores.UseCases;
 
 public class GetInfoDeOperadores
 {
-    private readonly IOperadorElectorRepository _operadorElectorRepository;
+    private readonly IOperadorPersonaRepository _operadorElectorRepository;
     private readonly ICurrentUserService _currentUserService;
 
     public GetInfoDeOperadores(
-        IOperadorElectorRepository operadorElectorRepository,
+        IOperadorPersonaRepository operadorElectorRepository,
         ICurrentUserService currentUserService)
     {
         _operadorElectorRepository = operadorElectorRepository;

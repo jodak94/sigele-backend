@@ -8,12 +8,12 @@ namespace Application.Reportes.UseCases;
 
 public class GetReporteElectoresPorOperador
 {
-    private readonly IOperadorElectorRepository _operadorElectorRepository;
+    private readonly IOperadorPersonaRepository _operadorElectorRepository;
     private readonly IUserRepository            _userRepository;
     private readonly ICurrentUserService        _currentUserService;
 
     public GetReporteElectoresPorOperador(
-        IOperadorElectorRepository operadorElectorRepository,
+        IOperadorPersonaRepository operadorElectorRepository,
         IUserRepository userRepository,
         ICurrentUserService currentUserService)
     {

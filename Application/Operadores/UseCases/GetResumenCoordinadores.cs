@@ -7,10 +7,10 @@ namespace Application.Operadores.UseCases;
 
 public class GetResumenCoordinadores
 {
-    private readonly IOperadorElectorRepository _repository;
+    private readonly IOperadorPersonaRepository _repository;
     private readonly ICurrentUserService        _currentUserService;
 
-    public GetResumenCoordinadores(IOperadorElectorRepository repository, ICurrentUserService currentUserService)
+    public GetResumenCoordinadores(IOperadorPersonaRepository repository, ICurrentUserService currentUserService)
     {
         _repository         = repository;
         _currentUserService = currentUserService;

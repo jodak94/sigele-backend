@@ -15,22 +15,32 @@ public class EstadisticasZonalesRepository : IEstadisticasZonalesRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<SeccionalCaptacionDto>> GetSecccionalesCaptacionAsync(int tenantId, int? coordinatorId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ZonaCaptacionDto>> GetZonasCaptacionAsync(int tenantId, int? coordinatorId, CancellationToken cancellationToken = default)
     {
         const string sql = """
-            SELECT e.codigo_sec  AS CodigoSeccional,
+            SELECT z.depart      AS Depart,
+                   z.distrito    AS Distrito,
+                   z.zona        AS Zona,
+                   z.descrip     AS Descripcion,
                    COUNT(*)::int AS TotalElectores
-            FROM operador_elector oe
-            JOIN elector e    ON e.id    = oe.elector_id
-            JOIN "user"  u    ON u.id    = oe.user_id
+            FROM operador_persona oe
+            JOIN "user" u ON u.id = oe.user_id
+            JOIN LATERAL (
+                SELECT i.depart, i.distrito, i.zona
+                FROM inscripcion i
+                WHERE i.cedula = oe.cedula
+                ORDER BY i.id DESC
+                LIMIT 1
+            ) ui ON true
+            JOIN zona z ON z.depart = ui.depart AND z.distrito = ui.distrito AND z.zona = ui.zona
             WHERE oe.tenant_id = @TenantId
               AND oe.is_active  = true
               AND (@CoordinatorId::int IS NULL OR u.coordinator_id = @CoordinatorId)
-            GROUP BY e.codigo_sec
+            GROUP BY z.depart, z.distrito, z.zona, z.descrip
             ORDER BY TotalElectores DESC
             """;
 
         var connection = _context.Database.GetDbConnection();
-        return await connection.QueryAsync<SeccionalCaptacionDto>(sql, new { TenantId = tenantId, CoordinatorId = coordinatorId });
+        return await connection.QueryAsync<ZonaCaptacionDto>(sql, new { TenantId = tenantId, CoordinatorId = coordinatorId });
     }
 }
