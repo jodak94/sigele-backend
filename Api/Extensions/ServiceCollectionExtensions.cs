@@ -21,6 +21,7 @@ using Application.VehiculoRequests.Interfaces;
 using Application.VehiculoRequests.UseCases;
 using Application.Vehiculos.Interfaces;
 using Application.Vehiculos.UseCases;
+using Application.Asistencia.UseCases;
 using Infrastructure.Auth;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
@@ -132,6 +133,9 @@ services.AddScoped<ResumenOperadoresPdfExporter>();
         services.AddScoped<GetVehiculoRequests>();
         services.AddScoped<AprobarVehiculoRequest>();
         services.AddScoped<RechazarVehiculoRequest>();
+        services.AddScoped<GetAsistenciaList>();
+        services.AddScoped<GetAsistenciaResumen>();
+        services.AddScoped<MarcarAsistencia>();
 
         return services;
     }

@@ -22,4 +22,10 @@ public static class Permissions
         public const string Update = "vehiculo:update";
         public const string Delete = "vehiculo:delete";
     }
+
+    public static class Asistencia
+    {
+        public const string Read = "asistencia:read";
+        public const string Update = "asistencia:update";
+    }
 }

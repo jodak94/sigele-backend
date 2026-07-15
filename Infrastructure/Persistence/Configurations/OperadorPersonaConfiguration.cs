@@ -14,6 +14,7 @@ public class OperadorPersonaConfiguration : IEntityTypeConfiguration<OperadorPer
         builder.Property(op => op.DireccionRecogida).HasMaxLength(255);
         builder.Property(op => op.IsActive).HasDefaultValue(true);
         builder.Property(op => op.CreatedAt).HasDefaultValueSql("NOW()");
+        builder.Property(op => op.Asistio).HasDefaultValue(false);
 
         builder.HasOne(op => op.User)
             .WithMany()
@@ -41,6 +42,12 @@ public class OperadorPersonaConfiguration : IEntityTypeConfiguration<OperadorPer
         builder.HasOne(op => op.OperadorUbicacion)
             .WithMany()
             .HasForeignKey(op => op.OperadorUbicacionId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
+
+        builder.HasOne(op => op.AsistioMarcadoPorUser)
+            .WithMany()
+            .HasForeignKey(op => op.AsistioMarcadoPor)
             .OnDelete(DeleteBehavior.SetNull)
             .IsRequired(false);
 

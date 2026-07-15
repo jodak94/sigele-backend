@@ -20,9 +20,14 @@ public class OperadorPersona
     public int? UbicacionId { get; set; }
     public int? OperadorUbicacionId { get; set; }
 
+    public bool Asistio { get; set; }
+    public DateTimeOffset? AsistioMarcadoEn { get; set; }
+    public int? AsistioMarcadoPor { get; set; }
+
     public User? User { get; set; }
     public Persona Persona { get; set; } = null!;
     public Tenant Tenant { get; set; } = null!;
     public Ubicacion? Ubicacion { get; set; }
     public Ubicacion? OperadorUbicacion { get; set; }
+    public User? AsistioMarcadoPorUser { get; set; }
 }

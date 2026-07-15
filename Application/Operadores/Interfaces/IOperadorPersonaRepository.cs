@@ -1,3 +1,4 @@
+using Application.Asistencia.DTOs;
 using Application.Operadores.DTOs;
 using Application.Reportes.DTOs;
 using Domain.Entities;
@@ -18,4 +19,6 @@ public interface IOperadorPersonaRepository
     Task<OperadorPersona?> GetByUserAndPersonaAsync(int userId, int cedula, bool includeInactive, CancellationToken cancellationToken = default);
     Task<IEnumerable<ResumenCoordinadorDto>> GetResumenCoordinadoresAsync(int tenantId, CancellationToken cancellationToken = default);
     Task<IEnumerable<ElectorUbicacionDto>> GetElectorUbicacionesAsync(int? operadorId, int? coordinadorId, int tenantId, CancellationToken cancellationToken = default);
+    Task<(IEnumerable<AsistenciaElectorDto> Items, int TotalCount)> GetAsistenciaListAsync(int tenantId, string? search, int page, int pageSize, CancellationToken cancellationToken = default);
+    Task<AsistenciaResumenDto> GetAsistenciaResumenAsync(int tenantId, CancellationToken cancellationToken = default);
 }

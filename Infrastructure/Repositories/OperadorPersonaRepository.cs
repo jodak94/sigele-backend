@@ -1,3 +1,4 @@
+using Application.Asistencia.DTOs;
 using Application.Common.Constants;
 using Application.Operadores.DTOs;
 using Application.Operadores.Interfaces;
@@ -221,5 +222,59 @@ public class OperadorPersonaRepository : IOperadorPersonaRepository
                 op.Ubicacion!.Descripcion
             ))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<(IEnumerable<AsistenciaElectorDto> Items, int TotalCount)> GetAsistenciaListAsync(int tenantId, string? search, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var query = _context.OperadorPersonas
+            .Where(op => op.TenantId == tenantId);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var trimmed = search.Trim();
+            if (int.TryParse(trimmed, out _))
+            {
+                query = query.Where(op => op.Cedula.ToString().Contains(trimmed));
+            }
+            else
+            {
+                var lowered = trimmed.ToLower();
+                query = query.Where(op => (op.Persona.Nombre + " " + op.Persona.Apellido).ToLower().Contains(lowered));
+            }
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(op => op.Persona.Apellido).ThenBy(op => op.Persona.Nombre)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(op => new AsistenciaElectorDto(
+                op.UserId,
+                op.Cedula,
+                (op.Persona.Apellido + " " + op.Persona.Nombre).Trim(),
+                op.NroTelefono,
+                op.Persona.Inscripciones.OrderByDescending(i => i.Id)
+                    .Select(i => i.Localidad != null ? i.Localidad.Descrip : null)
+                    .FirstOrDefault(),
+                op.User != null ? op.User.FullName : null,
+                op.Asistio,
+                op.AsistioMarcadoEn
+            ))
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
+    }
+
+    public async Task<AsistenciaResumenDto> GetAsistenciaResumenAsync(int tenantId, CancellationToken cancellationToken = default)
+    {
+        var query = _context.OperadorPersonas.Where(op => op.TenantId == tenantId);
+
+        var total = await query.CountAsync(cancellationToken);
+        var asistieron = await query.CountAsync(op => op.Asistio, cancellationToken);
+        var faltantes = total - asistieron;
+        var porcentaje = total == 0 ? 0 : Math.Round(asistieron * 100.0 / total, 1);
+
+        return new AsistenciaResumenDto(total, asistieron, faltantes, porcentaje);
     }
 }
