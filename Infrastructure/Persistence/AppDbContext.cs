@@ -41,6 +41,7 @@ public class AppDbContext : DbContext
     public DbSet<RcpDistrito> RcpDistritos => Set<RcpDistrito>();
     public DbSet<RcpZona> RcpZonas => Set<RcpZona>();
     public DbSet<RcpLocalidad> RcpLocalidades => Set<RcpLocalidad>();
+    public DbSet<MesaOrden> MesaOrdenes => Set<MesaOrden>();
     
     private int CurrentTenantId {
         get {

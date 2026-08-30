@@ -17,5 +17,11 @@ public class PersonaConfiguration : IEntityTypeConfiguration<Persona>
 
         builder.HasIndex(p => p.Apellido).HasDatabaseName("idx_persona_apellido");
         builder.HasIndex(p => p.Nombre).HasDatabaseName("idx_persona_nombre");
+
+        builder.HasOne(p => p.MesaOrden)
+            .WithOne()
+            .HasForeignKey<MesaOrden>(m => m.Cedula)
+            .HasPrincipalKey<Persona>(p => p.Cedula)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -10,4 +10,5 @@ public class Persona
     public string Origen { get; set; } = string.Empty;
 
     public ICollection<RcpInscripcion> Inscripciones { get; set; } = new List<RcpInscripcion>();
+    public MesaOrden? MesaOrden { get; set; }
 }

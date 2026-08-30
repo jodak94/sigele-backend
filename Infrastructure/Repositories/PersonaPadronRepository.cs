@@ -27,8 +27,8 @@ public class PersonaPadronRepository : IElectorPadronRepository
                 FechaNaci = p.FecNac,
                 CodigoSex = p.Sexo == "M" ? (short?)1 : p.Sexo == "F" ? (short?)2 : null,
                 Direccion = null,
-                Mesa      = null,
-                Orden     = null,
+                Mesa      = p.MesaOrden != null ? p.MesaOrden.Mesa : (short?)null,
+                Orden     = p.MesaOrden != null ? p.MesaOrden.Orden : (short?)null,
                 Local = p.Inscripciones
                     .OrderByDescending(i => i.Id)
                     .Select(i => new LocalDto
