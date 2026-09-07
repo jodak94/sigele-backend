@@ -52,8 +52,8 @@ public class OperadorPersonaRepository : IOperadorPersonaRepository
                 op.Persona.Inscripciones.OrderByDescending(i => i.Id)
                     .Select(i => i.Localidad != null ? i.Localidad.Descrip : null)
                     .FirstOrDefault(),
-                null,
-                null,
+                op.Persona.MesaOrden != null ? op.Persona.MesaOrden.Mesa : (short?)null,
+                op.Persona.MesaOrden != null ? op.Persona.MesaOrden.Orden : (short?)null,
                 op.Ubicacion != null
                     ? new UbicacionDto(op.Ubicacion.Lat, op.Ubicacion.Lng, op.Ubicacion.Descripcion)
                     : null,
